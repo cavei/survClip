@@ -28,22 +28,16 @@ expr <- exp[genes, , drop=FALSE]
 
 test_computePCsTopo <- function(){
   cliques <- clipper:::extractCliquesFromDag(graph, root=NULL)
-  test <- computePCs(t(expr), npc=1, robust=FALSE, shrink=FALSE, cliques=cliques)
-  checkEqualsNumeric(dim(test), c(73,1))
-}
-
-test_computePCsTopo2Pc <- function(){
-  cliques <- clipper:::extractCliquesFromDag(graph, root=NULL)
-  test <- computePCs(t(expr), npc=2, robust=FALSE, shrink=FALSE, cliques=cliques)
-  checkEqualsNumeric(dim(test), c(73,2))
+  test <- computePCs(t(expr), robust=FALSE, shrink=FALSE, cliques=cliques)
+  checkEqualsNumeric(dim(test$x), c(73,73))
 }
 
 test_computePCs <- function(){
-  test <- computePCs(t(expr), npc=1, robust=FALSE, shrink=FALSE, cliques=NULL)
-  checkEqualsNumeric(dim(test), c(73,1))
+  test <- computePCs(t(expr), robust=FALSE, shrink=FALSE, cliques=NULL)
+  checkEqualsNumeric(dim(test$x), c(73,73))
 }
 
 test_computePCsRobust <- function(){
   test <- computePCs(t(expr), npc=1, robust=TRUE, shrink=FALSE, cliques=NULL)
-  checkEqualsNumeric(dim(test), c(73,1))
+  checkEqualsNumeric(dim(test$x), c(73,10))
 }
