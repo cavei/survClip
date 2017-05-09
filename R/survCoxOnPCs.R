@@ -25,3 +25,22 @@ survCoxOnPC <- function(pc, annotations, formula, pc2class) {
   survivalcox(coxObj, formula)
 
 }
+
+survCoxOnAllPCs <- function(genes, expr, perc=0.8, annotations, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=NULL) {
+  expr <- expr[genes,, drop=FALSE]
+
+  if (NROW(expr) == 0) {
+    return(NULL)
+  }
+  expr <- t(expr)
+  pcs <- computePCs(expr, robust=robust, shrink=shrink, cliques=cliques)
+  chosen <- choosePCS(pcs, perc)
+  comps <- paste(chosen, collapse ="+")
+  formula = as.formula(paste("Surv(days, status) ~", comps, sep=" "))
+  pcsOnly <- pcs$x
+  coxObj <- data.frame(pcs$x[,chosen,drop=F], annotations)
+  if (length(chosen)==1){
+    return(survivalcox(coxObj, formula))
+  }
+  fullsurvivalcox(coxObj, formula)
+}
