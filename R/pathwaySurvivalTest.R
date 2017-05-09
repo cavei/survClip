@@ -1,4 +1,4 @@
-pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, pcNum=1, formula="Surv(days, status)~pc", root=NULL, alwaysShrink){
+pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, formula="Surv(days, status)~pc", root=NULL, alwaysShrink){
   genes <- nodes(graph)
   genes <- intersect(genes, rownames(expr))
   if (length(genes) <= 3){
@@ -27,9 +27,9 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, pcNum=1, form
   events <- survAnnot$status
 
   gtpvalue           <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr), permutations=nperm))
-  pcspvalue          <- survCoxOnPCs(genes, expr, pcNum, survAnnot, formula, pc2class=TRUE)
-  pcspvalueCov       <- survCoxOnPCs(genes, expr, pcNum, survAnnot, formula, pc2class=TRUE, shrink=FALSE, cliques=cliques)
-  pcspvalueCovAlways <- survCoxOnPCs(genes, expr, pcNum, survAnnot, formula, pc2class=TRUE, shrink=TRUE, cliques=cliques)
+  pcspvalue          <- survCoxOnAllPCs(genes, expr, perc, survAnnot, formula, pc2class=TRUE)
+  pcspvalueCov       <- survCoxOnAllPCs(genes, expr, perc, survAnnot, formula, pc2class=TRUE, shrink=FALSE, cliques=cliques)
+  pcspvalueCovAlways <- survCoxOnAllPCs(genes, expr, perc, survAnnot, formula, pc2class=TRUE, shrink=TRUE, cliques=cliques)
 
   return(list(gtPvalue=gtpvalue, pcsPvalue=pcspvalue, pcsPvalueCov=pcspvalueCov, pcsPvalueCovAlways=pcspvalueCovAlways))
 }

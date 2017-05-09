@@ -12,7 +12,7 @@ fullsurvivalcox <- function(coxObj, formula){
   coxObj <- na.omit(coxObj)
   coxRes <- survival::coxph(as.formula(formula), coxObj)
   sink("/dev/null")
-  coxRes <- step(coxRes)
+  coxRes <- stats::step(coxRes)
   sink(NULL)
   coxSummary <- summary(coxRes)
   zlist <- coxSummary$coefficients[,"Pr(>|z|)"]
