@@ -25,11 +25,51 @@ hcomputePCsTopo <- function(exp, npc, shrink, cliques){
   scores[, seq_len(npc), drop=FALSE]
 }
 
-computePCs <- function(exp, npc, robust, shrink=FALSE, cliques=NULL) {
-  if (is.null(cliques)) {
-    pcs <- hcomputePCs(exp, npc, robust)
-  } else {
-    pcs <- hcomputePCsTopo(exp, npc, shrink, cliques)
+compPCs <- function(exp, robust){
+  if(robust){
+    pca <- rrcov::PcaHubert(exp)
+    sdev <- apply(pca@scores,2,sd)
+    return(list(x=pca@scores, sdev=sdev))
   }
-  pcs
+  pca <- stats::prcomp(exp)
+  return(list(x=pca$x, sdev=pca$sdev))
+}
+
+compPCsTopo <- function(exp, shrink, cliques){
+  covmat <- clipper:::estimateExprCov(exp, shrink)
+  cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
+  scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)
+  pcCov<-base::eigen(scovmat)
+  scalee <- scale(exp)
+  eigenvector <- pcCov$vectors
+  scores <- scalee%*%eigenvector[, seq_len(NROW(exp)), drop=F]
+  colnames(scores) <- paste0("PC", seq_len(NROW(exp)))
+  sd<-apply(scores, 2, sd)
+  return(list(x=scores, sdev=sd))
+}
+
+choosePCS<-function(pcs, variability) {
+  percentVar <- pcs$sdev^2 / sum(pcs$sdev^2)
+  names(percentVar) <- colnames(pcs$x)
+  selection <- !cumsum(percentVar)>=variability
+  if (sum(selection) == 0) {
+    warning("Percent too low, only PC1 will be chosen.")
+    return("PC1")
+  }
+  return(names(which(selection)))
+}
+
+# computePCs <- function(exp, npc, robust, shrink=FALSE, cliques=NULL) {
+#   if (is.null(cliques)) {
+#     pcs <- hcomputePCs(exp, npc, robust)
+#   } else {
+#     pcs <- hcomputePCsTopo(exp, npc, shrink, cliques)
+#   }
+#   pcs
+# }
+
+computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL) {
+  if (is.null(cliques))
+    return(compPCs(exp, robust))
+  pcs <- compPCsTopo(exp, shrink, cliques)
 }
