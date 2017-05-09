@@ -1,11 +1,24 @@
 survivalcox <- function(coxObj, formula){
   coxRes <- survival::coxph(as.formula(formula), na.omit(coxObj))
   coxSummary <- summary(coxRes)
-  ## zlist <- coxSummary$coefficients[,"Pr(>|z|)"]
+  zlist <- coxSummary$coefficients[,"Pr(>|z|)"]
+  names(zlist) <- row.names(coxSummary$coefficients)
   pvalue <- coxSummary$logtest["pvalue"]
-  ## return(list(pvalue=pvalue, zlist=zlist))
-  return(pvalue)
+  return(list(pvalue=pvalue, zlist=zlist))
+  # return(pvalue)
 }
+
+fullsurvivalcox <- function(coxObj, formula){
+  coxObj <- na.omit(coxObj)
+  coxRes <- survival::coxph(as.formula(formula), coxObj)
+  coxRes <- step(coxRes)
+  coxSummary <- summary(coxRes)
+  zlist <- coxSummary$coefficients[,"Pr(>|z|)"]
+  names(zlist) <- row.names(coxSummary$coefficients)
+  pvalue <- coxSummary$logtest["pvalue"]
+  return(list(pvalue=pvalue, zlist=zlist))
+}
+
 
 computeDays <- function(timeTable) {
   if (NCOL(timeTable) != 2)
