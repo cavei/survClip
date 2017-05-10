@@ -42,8 +42,9 @@ compPCsTopo <- function(exp, shrink, cliques){
   pcCov<-base::eigen(scovmat)
   scalee <- scale(exp)
   eigenvector <- pcCov$vectors
-  scores <- scalee%*%eigenvector[, seq_len(NROW(exp)), drop=F]
-  colnames(scores) <- paste0("PC", seq_len(NROW(exp)))
+  npc <- min(dim(exp))
+  scores <- scalee%*%eigenvector[, seq_len(npc), drop=F]
+  colnames(scores) <- paste0("PC", seq_len(npc))
   sd<-apply(scores, 2, sd)
   return(list(x=scores, sdev=sd))
 }
