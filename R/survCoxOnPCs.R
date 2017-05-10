@@ -26,7 +26,8 @@ survCoxOnPC <- function(pc, annotations, formula, pc2class) {
 
 }
 
-survCoxOnAllPCs <- function(genes, expr, perc=0.8, annotations, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=NULL) {
+survCoxOnAllPCs <- function(genes, expr, perc=0.8, annotations, pc2class=TRUE, robust=FALSE,
+                            shrink=FALSE, cliques=NULL) {
   expr <- expr[genes,, drop=FALSE]
 
   if (NROW(expr) == 0) {

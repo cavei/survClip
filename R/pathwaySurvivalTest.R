@@ -27,9 +27,9 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, for
   events <- survAnnot$status
 
   gtpvalue           <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr), permutations=nperm))
-  pcspvalue          <- survCoxOnAllPCs(genes, expr, perc, survAnnot, formula, pc2class=TRUE)
-  pcspvalueCov       <- survCoxOnAllPCs(genes, expr, perc, survAnnot, formula, pc2class=TRUE, shrink=FALSE, cliques=cliques)
-  pcspvalueCovAlways <- survCoxOnAllPCs(genes, expr, perc, survAnnot, formula, pc2class=TRUE, shrink=TRUE, cliques=cliques)
+  pcspvalue          <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE)
+  pcspvalueCov       <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=cliques)
+  pcspvalueCovAlways <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=TRUE, cliques=cliques)
 
   return(list(gtPvalue=gtpvalue, pcsPvalue=pcspvalue, pcsPvalueCov=pcspvalueCov, pcsPvalueCovAlways=pcspvalueCovAlways))
 }
