@@ -31,9 +31,9 @@ cleanClipperResults <- function(clipped) {
   as.data.frame(clipped, stringsAsFactors=FALSE)
 }
 
-singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, formula, pc2class, nperm, trZero, signThr, maxGap) {
+singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap) {
   checkIn(expr, graph, root)
-  ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, formula=formula, pc2class, root)
+  ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, perc, formula=formula, pc2class, root)
   if (is.null(ct)){
     return(NULL)
   }
@@ -65,11 +65,13 @@ chooseRoot <- function(allTests) {
   allTests[[maxRoot]]
 }
 
-survClip <- function(expr, survAnnot, graph, pcNum=1, formula="Surv(days, status) ~ pc", pc2class=TRUE,
+survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE,
                      nperm=100, roots=NULL, trZero=0.001, signThr=0.05, maxGap=1, dropNULL=FALSE){
 
+  # pcNum=1; perc=0.6; formula="Surv(days; status) ~ pc"; pc2class=TRUE; nperm=100; roots=NULL; trZero=0.001; signThr=0.05; maxGap=1; dropNULL=FALSE
+  
   if (is.null(roots) & dropNULL) {
-    stop('You can not drop NULL as root with your only root is null.')
+    stop('You can not drop NULL as root when your only root is null.')
   }
   # Need a function for the check?
   if (NROW(expr)==0){
@@ -87,18 +89,18 @@ survClip <- function(expr, survAnnot, graph, pcNum=1, formula="Surv(days, status
   graph <- graph::subGraph(genes, graph)
 
   if (is.null(roots)) {
-    rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, formula=formula,
+    rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
                                    pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap)
     return(rootNULL)
   }
 
-  allTests <- lapply(roots, singleSurvivalClip, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, formula=formula,
+  allTests <- lapply(roots, singleSurvivalClip, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
                     pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap)
 
   names(allTests) <- roots
 
   if (!dropNULL) {
-    rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, formula=formula,
+    rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
                                    pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap)
     rnull <- length(allTests) + 1
     allTests[[rnull]] <- rootNULL

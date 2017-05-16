@@ -24,8 +24,8 @@ graph <- pathwayGraph(k[["Pathways in cancer"]])
 
 test_cliqueSurvivalTest <- function(){
 	set.seed(1234)
-	test <- cliqueSurvivalTest(exp, graph, survAnnot, formula="Surv(days, status)~pc")
-	checkEqualsNumeric(which(test$alpha <= 0.05), c(36, 60))
+	test <- cliqueSurvivalTest(exp, graph, survAnnot)
+	checkTrue(test$alpha[10] <= 0.05)
 }
 
 

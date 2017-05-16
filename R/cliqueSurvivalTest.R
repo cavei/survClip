@@ -4,7 +4,7 @@ chooseBestPC <- function(alpha){
   return(c(p, idx))
 }
 
-cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, formula="Surv(days, status) ~ pc", pc2class=TRUE, root=NULL) {
+cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE, root=NULL) {
   if (!is.data.frame(survAnnot)){
     stop("'annotations' must be a 'data.frame' object.")
   }
@@ -21,8 +21,10 @@ cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, formula="Surv(da
 
   # clipper Function to import
   cliques <- clipper:::extractCliquesFromDag(graph, root=root)
-  alphas <- lapply(cliques, survCoxOnPCs, expr=expr, pcNum=pcNum, annotations=survAnnot, formula=formula, pc2class=pc2class)
-  alphas <- t(sapply(alphas, chooseBestPC))
-
-  list(alpha=alphas[,1], pc=alphas[,2], cliques=cliques)
+  
+  # survCoxOnAllPCs(genes, expr, perc=perc, annotations, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=NULL)
+  results <- lapply(cliques, survCoxOnAllPCs, expr=expr, perc=perc, annotations=survAnnot, pc2class=pc2class, robust=robust, shrink=FALSE, cliques=NULL)
+  alphas <- sapply(results, function(x) x$pvalue)
+  names(alphas) <- NULL
+  list(alpha=alphas, full=results, cliques=cliques)
 }

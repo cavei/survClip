@@ -27,15 +27,19 @@ survCoxOnPC <- function(pc, annotations, formula, pc2class) {
 }
 
 survCoxOnAllPCs <- function(genes, expr, perc=0.8, annotations, pc2class=TRUE, robust=FALSE,
-                            shrink=FALSE, cliques=NULL) {
+                            shrink=FALSE, cliques=NULL, maxPCs=10) {
   expr <- expr[genes,, drop=FALSE]
-
+  if (perc<=0 || perc > 1)
+    stop("perc must be between 0 and 1 (0 < perc <= 1)")
   if (NROW(expr) == 0) {
     return(NULL)
   }
-  expr <- t(expr)
+  expr <- t(expr) # chek this
   pcs <- computePCs(expr, robust=robust, shrink=shrink, cliques=cliques)
   chosen <- choosePCS(pcs, perc)
+  maxPCs <- min(length(chosen), maxPCs)
+  chosen = chosen[seq_len(maxPCs)]
+    
   comps <- paste(chosen, collapse ="+")
   formula = as.formula(paste("Surv(days, status) ~", comps, sep=" "))
   pcsOnly <- pcs$x

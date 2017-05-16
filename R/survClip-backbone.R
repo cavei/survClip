@@ -11,9 +11,11 @@ survivalcox <- function(coxObj, formula){
 fullsurvivalcox <- function(coxObj, formula){
   coxObj <- na.omit(coxObj)
   coxRes <- survival::coxph(as.formula(formula), coxObj)
-  sink("/dev/null")
-  coxRes <- stats::step(coxRes)
-  sink(NULL)
+  # sink("/dev/null")
+  # suppressWarnings(stepCoxRes <- stats::step(coxRes))
+  # if (!is.null(summary(stepCoxRes)$coefficients))
+  #   coxRes <- stepCoxRes
+  # sink(NULL)
   coxSummary <- summary(coxRes)
   zlist <- coxSummary$coefficients[,"Pr(>|z|)"]
   names(zlist) <- row.names(coxSummary$coefficients)

@@ -54,7 +54,6 @@ choosePCS<-function(pcs, variability) {
   names(percentVar) <- colnames(pcs$x)
   selection <- !cumsum(percentVar)>=variability
   if (sum(selection) == 0) {
-    warning("Percent too low, only PC1 will be chosen.")
     return("PC1")
   }
   return(names(which(selection)))

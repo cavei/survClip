@@ -1,4 +1,5 @@
-pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, formula="Surv(days, status)~pc", root=NULL, alwaysShrink){
+pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, formula="Surv(days, status)~pc",
+                                root=NULL, alwaysShrink=FALSE, maxPCs=10){
   genes <- nodes(graph)
   genes <- intersect(genes, rownames(expr))
   if (length(genes) <= 3){
@@ -21,15 +22,15 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, for
   cliques <- clipper:::extractCliquesFromDag(graph, root=root)
 
   maxcliques <- max(sapply(cliques, length))
-  shrink <- length(samples) < maxcliques || alwaysShrink
+  shrink <- length(samples) < maxcliques | alwaysShrink
 
   days   <- survAnnot$days
   events <- survAnnot$status
 
   gtpvalue           <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr), permutations=nperm))
-  pcspvalue          <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE)
-  pcspvalueCov       <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=cliques)
-  pcspvalueCovAlways <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=TRUE, cliques=cliques)
+  pcspvalue          <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, maxPCs=maxPCs)
+  pcspvalueCov       <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=cliques, maxPCs=maxPCs)
+  pcspvalueCovAlways <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=TRUE, cliques=cliques, maxPCs=maxPCs)
 
   return(list(gtPvalue=gtpvalue, pcsPvalue=pcspvalue, pcsPvalueCov=pcspvalueCov, pcsPvalueCovAlways=pcspvalueCovAlways))
 }
