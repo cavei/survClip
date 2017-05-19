@@ -4,11 +4,10 @@ chooseBestPC <- function(alpha){
   return(c(p, idx))
 }
 
-cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE, root=NULL) {
+cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE, robust=FALSE, root=NULL) {
   if (!is.data.frame(survAnnot)){
     stop("'annotations' must be a 'data.frame' object.")
   }
-
   genes <- nodes(graph)
   genes <- intersect(genes, row.names(expr))
 
