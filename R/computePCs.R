@@ -37,6 +37,7 @@ compPCs <- function(exp, robust){
 
 compPCsTopo <- function(exp, shrink, cliques){
   covmat <- clipper:::estimateExprCov(exp, shrink)
+  covmat <- makePositiveDefinite(covmat)$m1
   cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
   scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)
   pcCov<-base::eigen(scovmat)
