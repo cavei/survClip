@@ -35,11 +35,14 @@ compPCs <- function(exp, robust){
   return(list(x=pca$x, sdev=pca$sdev))
 }
 
-compPCsTopo <- function(exp, shrink, cliques){
+compPCsTopo <- function(exp, shrink, cliques, useTopology=TRUE){
   covmat <- clipper:::estimateExprCov(exp, shrink)
   covmat <- makePositiveDefinite(covmat)$m1
   cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
-  scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)
+  scovmat <- covmat
+  if (useTopology) {
+    scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)  
+  } 
   pcCov<-base::eigen(scovmat)
   scalee <- scale(exp)
   eigenvector <- pcCov$vectors
@@ -69,8 +72,8 @@ choosePCS<-function(pcs, variability) {
 #   pcs
 # }
 
-computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL) {
+computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL, useTopology=TRUE) {
   if (is.null(cliques))
     return(compPCs(exp, robust))
-  pcs <- compPCsTopo(exp, shrink, cliques)
+  pcs <- compPCsTopo(exp, shrink, cliques, useTopology=useTopology)
 }
