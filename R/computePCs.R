@@ -72,8 +72,8 @@ choosePCS<-function(pcs, variability) {
 #   pcs
 # }
 
-computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL, useTopology=TRUE, shrinkForCLiques=FALSE) {
-  if (shrinkForCLiques) {
+computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL, useTopology=TRUE, shrinkForCliques=FALSE) {
+  if (shrinkForCliques) {
     return(compPCsTopo(exp, shrink=TRUE, cliques=NULL, useTopology=FALSE))
   }
   if (is.null(cliques))

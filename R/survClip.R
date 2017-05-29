@@ -31,9 +31,9 @@ cleanClipperResults <- function(clipped) {
   as.data.frame(clipped, stringsAsFactors=FALSE)
 }
 
-singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap, robust, shrinkForCLiques) {
+singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap, robust, shrinkForCliques) {
   checkIn(expr, graph, root)
-  ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, perc, formula=formula, pc2class, robust, root, shrinkForCLiques)
+  ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, perc, formula=formula, pc2class, robust, root, shrinkForCliques)
   if (is.null(ct)){
     return(NULL)
   }
@@ -66,7 +66,7 @@ chooseRoot <- function(allTests) {
 }
 
 survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE,
-                     nperm=100, roots=NULL, trZero=0.001, signThr=0.05, maxGap=1, dropNULL=FALSE, robust=FALSE, shrinkForCLiques=FALSE){
+                     nperm=100, roots=NULL, trZero=0.001, signThr=0.05, maxGap=1, dropNULL=FALSE, robust=FALSE, shrinkForCliques=FALSE){
 
   # pcNum=1; perc=0.6; formula="Surv(days; status) ~ pc"; pc2class=TRUE; nperm=100; roots=NULL; trZero=0.001; signThr=0.05; maxGap=1; dropNULL=FALSE
   
