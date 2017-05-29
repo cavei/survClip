@@ -31,9 +31,9 @@ cleanClipperResults <- function(clipped) {
   as.data.frame(clipped, stringsAsFactors=FALSE)
 }
 
-singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap, robust) {
+singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap, robust, shrinkForCLiques) {
   checkIn(expr, graph, root)
-  ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, perc, formula=formula, pc2class, robust, root)
+  ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, perc, formula=formula, pc2class, robust, root, shrinkForCLiques)
   if (is.null(ct)){
     return(NULL)
   }
