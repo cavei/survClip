@@ -27,7 +27,7 @@ survCoxOnPC <- function(pc, annotations, formula, pc2class) {
 }
 
 survCoxOnAllPCs <- function(genes, expr, perc=0.8, annotations, pc2class=TRUE, robust=FALSE,
-                            shrink=FALSE, cliques=NULL, maxPCs=10, useTopology=TRUE) {
+                            shrink=FALSE, cliques=NULL, maxPCs=10, useTopology=TRUE, shrinkForCLiques=FALSE) {
   expr <- expr[genes,, drop=FALSE]
   if (perc<=0 || perc > 1)
     stop("perc must be between 0 and 1 (0 < perc <= 1)")
@@ -35,7 +35,7 @@ survCoxOnAllPCs <- function(genes, expr, perc=0.8, annotations, pc2class=TRUE, r
     return(NULL)
   }
   expr <- t(expr) # chek this
-  pcs <- computePCs(expr, robust=robust, shrink=shrink, cliques=cliques, useTopology=useTopology)
+  pcs <- computePCs(expr, robust=robust, shrink=shrink, cliques=cliques, useTopology=useTopology, shrinkForCLiques=shrinkForCLiques)
   chosen <- choosePCS(pcs, perc)
   maxPCs <- min(length(chosen), maxPCs)
   chosen = chosen[seq_len(maxPCs)]

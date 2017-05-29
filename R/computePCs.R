@@ -38,9 +38,9 @@ compPCs <- function(exp, robust){
 compPCsTopo <- function(exp, shrink, cliques, useTopology=TRUE){
   covmat <- clipper:::estimateExprCov(exp, shrink)
   covmat <- makePositiveDefinite(covmat)$m1
-  cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
   scovmat <- covmat
   if (useTopology) {
+    cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
     scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)  
   } 
   pcCov<-base::eigen(scovmat)
@@ -72,8 +72,17 @@ choosePCS<-function(pcs, variability) {
 #   pcs
 # }
 
-computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL, useTopology=TRUE) {
+computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL, useTopology=TRUE, shrinkForCLiques=FALSE) {
+  if (shrinkForCLiques) {
+    return(compPCsTopo(exp, shrink=TRUE, cliques=NULL, useTopology=FALSE))
+  }
   if (is.null(cliques))
     return(compPCs(exp, robust))
-  pcs <- compPCsTopo(exp, shrink, cliques, useTopology=useTopology)
+  compPCsTopo(exp, shrink, cliques, useTopology=useTopology)
+}
+
+computeCliquesPCs <- function(exp, robust=FALSE, shrink=FALSE) {
+   if (shrink)
+     return(compPCsTopo(exp, shrink=TRUE, cliques=NULL, useTopology=FALSE))
+  return(compPCs(exp, robust))
 }

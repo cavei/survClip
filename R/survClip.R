@@ -66,7 +66,7 @@ chooseRoot <- function(allTests) {
 }
 
 survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE,
-                     nperm=100, roots=NULL, trZero=0.001, signThr=0.05, maxGap=1, dropNULL=FALSE, robust=FALSE){
+                     nperm=100, roots=NULL, trZero=0.001, signThr=0.05, maxGap=1, dropNULL=FALSE, robust=FALSE, shrinkForCLiques=FALSE){
 
   # pcNum=1; perc=0.6; formula="Surv(days; status) ~ pc"; pc2class=TRUE; nperm=100; roots=NULL; trZero=0.001; signThr=0.05; maxGap=1; dropNULL=FALSE
   
@@ -90,18 +90,18 @@ survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(da
 
   if (is.null(roots)) {
     rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
-                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust)
+                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCLiques=shrinkForCLiques)
     return(rootNULL)
   }
 
   allTests <- lapply(roots, singleSurvivalClip, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
-                    pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust)
+                    pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCLiques=shrinkForCLiques)
 
   names(allTests) <- roots
 
   if (!dropNULL) {
     rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
-                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust)
+                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCLiques=shrinkForCLiques)
     rnull <- length(allTests) + 1
     allTests[[rnull]] <- rootNULL
     names(allTests) <- c(roots,"null")
