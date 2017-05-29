@@ -90,18 +90,18 @@ survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(da
 
   if (is.null(roots)) {
     rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
-                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCLiques=shrinkForCLiques)
+                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCliques=shrinkForCliques)
     return(rootNULL)
   }
 
   allTests <- lapply(roots, singleSurvivalClip, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
-                    pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCLiques=shrinkForCLiques)
+                    pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCliques=shrinkForCliques)
 
   names(allTests) <- roots
 
   if (!dropNULL) {
     rootNULL <- singleSurvivalClip(root=NULL, expr=expr, survAnnot=survAnnot, graph=graph, pcNum=pcNum, perc=perc, formula=formula,
-                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCLiques=shrinkForCLiques)
+                                   pc2class=pc2class, nperm=nperm, trZero=trZero, signThr=signThr, maxGap=maxGap, robust=robust, shrinkForCliques=shrinkForCliques)
     rnull <- length(allTests) + 1
     allTests[[rnull]] <- rootNULL
     names(allTests) <- c(roots,"null")
