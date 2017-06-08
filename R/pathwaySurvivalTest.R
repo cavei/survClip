@@ -1,5 +1,5 @@
-pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, formula="Surv(days, status)~pc",
-                                root=NULL, alwaysShrink=FALSE, maxPCs=10){
+pathwaySurvivalTest <- function(expr, survAnnot, graph, root=NULL,
+                                pcsSurvCoxMethod=c("regular", "topological", "sparse"), alwaysShrink=FALSE, maxPCs=10){
   genes <- nodes(graph)
   genes <- intersect(genes, rownames(expr))
   if (length(genes) <= 3){
@@ -26,19 +26,21 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, nperm=100, perc=0.8, for
 
   days   <- survAnnot$days
   events <- survAnnot$status
-
-  set.seed(1234)
-  gtpvalue           <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr), permutations=nperm))
-  set.seed(1234)
-  pcspvalue          <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, maxPCs=maxPCs)
-  set.seed(1234)
-  pcspvalueCov       <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=cliques, maxPCs=maxPCs)
-  set.seed(1234)
-  pcspvalueCovAlways <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=TRUE,  cliques=cliques, maxPCs=maxPCs)
-  set.seed(1234)
-  pcspvalueCovAlwaysNT <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=cliques, maxPCs=maxPCs, useTopology = FALSE)
-  set.seed(1234)
-  pcspvalueCovAlwaysNT.shrink <- survCoxOnAllPCs(genes, expr, perc, survAnnot, pc2class=TRUE, robust=FALSE, shrink=TRUE,  cliques=cliques, maxPCs=maxPCs, useTopology = FALSE)
   
-  return(list(gtPvalue=gtpvalue, pcsPvalue=pcspvalue, pcsPvalueCov=pcspvalueCov, pcsPvalueCovAlways=pcspvalueCovAlways, noTopo=pcspvalueCovAlwaysNT, noTopoShrinked=pcspvalueCovAlwaysNT.shrink))
+  method = pcsSurvCoxMethod[1]
+  
+  set.seed(1234)
+  gtpvalue          <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr)))
+  set.seed(1234)
+  pvalue            <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=FALSE, cliques=NULL, maxPCs=maxPCs)
+  set.seed(1234)
+  pvalueShinkNoTopo <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=TRUE, cliques=NULL, maxPCs=maxPCs)
+  set.seed(1234)
+  pvalueTopo        <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=FALSE, cliques=cliques, maxPCs=maxPCs)
+  set.seed(1234)
+  pvalueTopoShrink  <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=TRUE, cliques=cliques, maxPCs=maxPCs)
+
+  new("survPath",
+      pvalues = list(gtPvalue=gtpvalue, regPvalue=pvalue, regShrinkPvalue=pvalueShinkNoTopo, topoPvalue=pvalueTopo, topoShrinkPvalue=pvalueTopoShrink),
+      method=method)
 }

@@ -1,4 +1,4 @@
-checkIn <- function(expr, graph, root) {
+.checkIn <- function(expr, graph, root) {
   if (NROW(expr)==0){
     warning("Expression matrix has 0 rows.")
     return(NULL)
@@ -13,7 +13,7 @@ checkIn <- function(expr, graph, root) {
   return(TRUE)
 }
 
-cleanClipperResults <- function(clipped) {
+.cleanClipperResults <- function(clipped) {
   clpprNames <- c("startIdx", "endIdx", "maxIdx", "lenght", "maxScore", "aScore", "activation", "impact",
     "involvedCliques", "cliqueOnPath", "involvedGenes", "pathGenes")
 
@@ -31,7 +31,7 @@ cleanClipperResults <- function(clipped) {
   as.data.frame(clipped, stringsAsFactors=FALSE)
 }
 
-singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap, robust, shrinkForCliques) {
+.singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formula, pc2class, nperm, trZero, signThr, maxGap, robust, shrinkForCliques) {
   checkIn(expr, graph, root)
   ct <- cliqueSurvivalTest(expr, graph, survAnnot, pcNum, perc, formula=formula, pc2class, robust, root, shrinkForCliques)
   if (is.null(ct)){
@@ -46,7 +46,7 @@ singleSurvivalClip <- function(root, expr, survAnnot, graph, pcNum, perc, formul
   cleanClipperResults(clipped)
 }
 
-chooseRoot <- function(allTests) {
+.chooseRoot <- function(allTests) {
   maxScore <- 0
   maxRoot <- NULL
   for (r in names(allTests)) {
@@ -65,7 +65,7 @@ chooseRoot <- function(allTests) {
   allTests[[maxRoot]]
 }
 
-survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE,
+.survClip <- function(expr, survAnnot, graph, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE,
                      nperm=100, roots=NULL, trZero=0.001, signThr=0.05, maxGap=1, dropNULL=FALSE, robust=FALSE, shrinkForCliques=FALSE){
 
   # pcNum=1; perc=0.6; formula="Surv(days; status) ~ pc"; pc2class=TRUE; nperm=100; roots=NULL; trZero=0.001; signThr=0.05; maxGap=1; dropNULL=FALSE

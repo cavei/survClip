@@ -1,7 +1,7 @@
 Package: survClip
 Type: Package
 Title: Survival analysis for pathways
-Version: 0.1.0
+Version: 0.2.0
 Author: Paolo Martini
 Maintainer: Paolo Martini <paolo.cavei@gmail.com>
 Description: Perform topological survival analysis.

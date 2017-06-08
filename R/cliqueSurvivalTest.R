@@ -1,13 +1,12 @@
-chooseBestPC <- function(alpha){
-  idx <- which.min(alpha)
-  p <- min(alpha)
-  return(c(p, idx))
-}
-
-cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, perc=0.6, formula="Surv(days, status) ~ pc", pc2class=TRUE, robust=FALSE, root=NULL,shrinkForCliques=FALSE) {
+cliqueSurvivalTest <- function(expr, graph, survAnnot, root=NULL, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10) {
   if (!is.data.frame(survAnnot)){
     stop("'annotations' must be a 'data.frame' object.")
   }
+  pcsSurvCoxMethod <- pcsSurvCoxMethod[1]
+  if (pcsSurvCoxMethod=="topological") {
+    stop("topological method not supported for cliques.")
+  }
+  
   genes <- nodes(graph)
   genes <- intersect(genes, row.names(expr))
 
@@ -20,10 +19,9 @@ cliqueSurvivalTest <- function(expr, graph, survAnnot, pcNum=1, perc=0.6, formul
 
   # clipper Function to import
   cliques <- clipper:::extractCliquesFromDag(graph, root=root)
-  
-  # survCoxOnAllPCs(genes, expr, perc=perc, annotations, pc2class=TRUE, robust=FALSE, shrink=FALSE, cliques=NULL, shrinkForCliques=shrinkForCliques)
-  results <- lapply(cliques, survCoxOnAllPCs, expr=expr, perc=perc, annotations=survAnnot, pc2class=pc2class, robust=robust, shrink=FALSE, cliques=NULL, shrinkForCliques=shrinkForCliques)
+  results <- lapply(cliques, pcsSurvCox, expr=expr, annotations=survAnnot, method=pcsSurvCoxMethod, shrink=alwaysShrink, maxPCs=maxPCs)
   alphas <- sapply(results, function(x) x$pvalue)
+  zlist  <- lapply(results, function(x) x$zlist)
   names(alphas) <- NULL
-  list(alpha=alphas, full=results, cliques=cliques)
+  new("survCliques", alphas=alphas, zlist=zlist, cliques=cliques)
 }

@@ -26,18 +26,18 @@ genes <- intersect(graph::nodes(graph), row.names(exp))
 graph <- graph::subGraph(genes, graph)
 expr <- exp[genes, , drop=FALSE]
 
-test_computePCsTopo <- function(){
+test_computePCs_topological <- function(){
   cliques <- clipper:::extractCliquesFromDag(graph, root=NULL)
-  test <- computePCs(t(expr), robust=FALSE, shrink=FALSE, cliques=cliques)
-  checkEqualsNumeric(dim(test$x), c(73,73))
+  test <- computePCs(t(expr), shrink=FALSE, method="topological", cliques=cliques, maxPCs=10)
+  checkEqualsNumeric(dim(test$x), c(73,73)) ##
 }
 
-test_computePCs <- function(){
-  test <- computePCs(t(expr), robust=FALSE, shrink=FALSE, cliques=NULL)
-  checkEqualsNumeric(dim(test$x), c(73,73))
+test_computePCs_regular <- function(){
+  test <- computePCs(t(expr), shrink=FALSE, method="regular", maxPCs=10)
+  checkEqualsNumeric(dim(test$x), c(73,73)) ##
 }
 
-test_computePCsRobust <- function(){
-  test <- computePCs(t(expr), npc=1, robust=TRUE, shrink=FALSE, cliques=NULL)
-  checkEqualsNumeric(dim(test$x), c(73,10))
+test_computePCs_sparse <- function(){
+  test <- computePCs(t(expr), shrink=FALSE, method="sparse", maxPCs=10)
+  checkEqualsNumeric(dim(test$x), c(73,73)) ##
 }

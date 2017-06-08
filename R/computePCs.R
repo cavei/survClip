@@ -1,88 +1,52 @@
-hcomputePCs <- function(exp, npc, robust){
-  if (NCOL(exp) < npc)
-    npc <- NCOL(exp)
-
-  if(robust){
-    rrcov::PcaHubert(exp,k=npc)@scores
-  } else {
-    pc1 <- stats::prcomp(exp)$x[,1:npc]
-    as.matrix(pc1,ncol=npc)
-  }
-}
-
-hcomputePCsTopo <- function(exp, npc, shrink, cliques){
-  if (NCOL(exp) < npc)
-    npc <- NCOL(exp)
-
-  covmat <- clipper:::estimateExprCov(exp, shrink)
+topoCompPCs <- function(exp, shrink, cliques, k) {
+  if (is.null(cliques))
+    stop("Cliques argument is needed")
+  covmat <- clipper:::estimateExprCov(exp, shrink) ## Consider collapse with the following line!
+  covmat <- makePositiveDefinite(covmat)$m1
   cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
   scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)
-
-  pcCov<-base::eigen(scovmat)
-  scalee <- scale(exp)
+  pcCov <- base::eigen(scovmat)
   eigenvector <- pcCov$vectors
-  scores <- scalee%*%eigenvector
-  scores[, seq_len(npc), drop=FALSE]
-}
-
-compPCs <- function(exp, robust){
-  if(robust){
-    pca <- rrcov::PcaHubert(exp)
-    sdev <- apply(pca@scores,2,sd)
-    return(list(x=pca@scores, sdev=sdev))
-  }
-  pca <- stats::prcomp(exp)
-  return(list(x=pca$x, sdev=pca$sdev))
-}
-
-compPCsTopo <- function(exp, shrink, cliques, useTopology=TRUE){
-  covmat <- clipper:::estimateExprCov(exp, shrink)
-  covmat <- makePositiveDefinite(covmat)$m1
-  scovmat <- covmat
-  if (useTopology) {
-    cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
-    scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)  
-  } 
-  pcCov<-base::eigen(scovmat)
-  scalee <- scale(exp)
-  eigenvector <- pcCov$vectors
+  scalee <- scale(exp, scale=FALSE)
   npc <- min(dim(exp))
-  scores <- scalee%*%eigenvector[, seq_len(npc), drop=F]
-  colnames(scores) <- paste0("PC", seq_len(npc))
+  scores <- scalee%*%eigenvector[, seq_len(k), drop=F]
+  colnames(scores) <- paste0("PC", seq_len(k))
   sd<-apply(scores, 2, sd)
   return(list(x=scores, sdev=sd))
 }
 
-choosePCS<-function(pcs, variability) {
-  percentVar <- pcs$sdev^2 / sum(pcs$sdev^2)
-  names(percentVar) <- colnames(pcs$x)
-  selection <- !cumsum(percentVar)>=variability
-  if (sum(selection) == 0) {
-    return("PC1")
-  }
-  return(names(which(selection)))
+sparseCompPCs <- function(exp, shrink, k) {
+  covmat <- clipper:::estimateExprCov(exp, shrink) ## Consider collapse with the following line!
+  covmat <- makePositiveDefinite(covmat)$m1
+  paraSingle <- min(round((NCOL(exp)/2)),5) ## Parametri fissi da valutare
+  pcCov <- elasticnet::spca(covmat, K =k, para = rep(paraSingle,k), type = "predictor", sparse = "varnum")
+  eigenvector  <- pcCov$loadings
+  scalee <- scale(exp, scale=FALSE)
+  npc <- min(dim(exp))
+  scores <- scalee%*%eigenvector[, seq_len(k), drop=F]
+  colnames(scores) <- paste0("PC", seq_len(k))
+  sd<-apply(scores, 2, sd)
+  return(list(x=scores, sdev=sd))
 }
 
-# computePCs <- function(exp, npc, robust, shrink=FALSE, cliques=NULL) {
-#   if (is.null(cliques)) {
-#     pcs <- hcomputePCs(exp, npc, robust)
-#   } else {
-#     pcs <- hcomputePCsTopo(exp, npc, shrink, cliques)
-#   }
-#   pcs
-# }
-
-computePCs <- function(exp, robust=FALSE, shrink=FALSE, cliques=NULL, useTopology=TRUE, shrinkForCliques=FALSE) {
-  if (shrinkForCliques) {
-    return(compPCsTopo(exp, shrink=TRUE, cliques=NULL, useTopology=FALSE))
-  }
-  if (is.null(cliques))
-    return(compPCs(exp, robust))
-  compPCsTopo(exp, shrink, cliques, useTopology=useTopology)
+compPCs <- function(exp, shrink, k) {
+  covmat <- clipper:::estimateExprCov(exp, shrink) ## Consider collapse with the following line!
+  covmat <- makePositiveDefinite(covmat)$m1
+  scovmat<-covmat
+  pcCov <- base::eigen(scovmat)
+  eigenvector <- pcCov$vectors
+  scalee <- scale(exp, scale=FALSE)
+  npc <- min(dim(exp))
+  scores <- scalee%*%eigenvector[, seq_len(k), drop=F]
+  colnames(scores) <- paste0("PC", seq_len(k))
+  sd<-apply(scores, 2, sd)
+  return(list(x=scores, sdev=sd))
 }
 
-computeCliquesPCs <- function(exp, robust=FALSE, shrink=FALSE) {
-   if (shrink)
-     return(compPCsTopo(exp, shrink=TRUE, cliques=NULL, useTopology=FALSE))
-  return(compPCs(exp, robust))
+computePCs <- function(exp, shrink, method=c("regular", "topological", "sparse"), cliques=NULL, maxPCs) {
+  k<- min(FactoMineR::estim_ncp(exp,scale=FALSE,ncp.min=1)$ncp, maxPCs)
+  switch(method,
+         regular     = compPCs(exp=exp, shrink=shrink, k=k),
+         topological = topoCompPCs(exp=exp, shrink=shrink, cliques=cliques, k=k),
+         sparse      = sparseCompPCs(exp=exp, shrink=shrink, k=k))
 }
