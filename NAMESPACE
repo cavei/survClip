@@ -1,6 +1,6 @@
-
 importFrom("methods", "new")
 importFrom("stats", "as.formula", "median", "na.omit")
+importFrom("elasticnet", "spca")
+importFrom("FactoMineR","estim_ncp")
 import(corpcor, graph, qpgraph, rrcov, survival)
-
 exportPattern("^[[:alpha:]]+")

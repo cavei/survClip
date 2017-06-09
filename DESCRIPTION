@@ -9,6 +9,6 @@ Description: Perform topological survival analysis.
 Encoding: UTF-8
 LazyData: true
 Depends:
-Imports: Matrix, graph, methods,  Biobase, Rcpp, igraph, gRbase, qpgraph, corpcor, RBGL, globaltest, survival, clipper, rrcov
+Imports: Matrix, graph, methods,  Biobase, Rcpp, igraph, gRbase, qpgraph, corpcor, RBGL, globaltest, survival, clipper, rrcov, FactoMineR, elasticnet
 Suggests: RUnit, BiocGenerics, graphite, ALL, hgu95av2.db, MASS, BiocStyle
 License: AGPL-3
