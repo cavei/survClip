@@ -12,24 +12,15 @@ ann <- ann[samples,, drop=FALSE]
 
 time <- computeDays(ann[,1:2])
 events <- as.numeric(ann[,3])
-isto <- ann[,"Isto"]
-grade <- ann[,"Grado"]
 
-survAnnot <- data.frame(days=time, status=events, grade=grade,
-	isto=isto, row.names=samples)
+survAnnot <- data.frame(days=time, status=events, row.names=samples)
 
 k <- pathways("hsapiens", "kegg")
-k <- convertIdentifiers(k, "entrez")
-graph <- pathwayGraph(k[["Pathways in cancer"]])
+p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
+graph <- pathwayGraph(p)
 
 test_cliqueSurvivalTest <- function(){
 	set.seed(1234)
 	test <- cliqueSurvivalTest(exp, graph, survAnnot)
-	checkTrue(test$alpha[10] <= 0.05)
+	checkTrue(test@alphas[10] <= 0.05)
 }
-
-
-
-
-
-

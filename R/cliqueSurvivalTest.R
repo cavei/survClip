@@ -1,7 +1,8 @@
-cliqueSurvivalTest <- function(expr, graph, survAnnot, root=NULL, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10) {
+cliqueSurvivalTest <- function(expr, graph, survAnnot, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~") {
   if (!is.data.frame(survAnnot)){
     stop("'annotations' must be a 'data.frame' object.")
   }
+  
   pcsSurvCoxMethod <- pcsSurvCoxMethod[1]
   if (pcsSurvCoxMethod=="topological") {
     stop("topological method not supported for cliques.")
@@ -18,8 +19,8 @@ cliqueSurvivalTest <- function(expr, graph, survAnnot, root=NULL, pcsSurvCoxMeth
   expr <- expr[genes,, drop=FALSE]
 
   # clipper Function to import
-  cliques <- clipper:::extractCliquesFromDag(graph, root=root)
-  results <- lapply(cliques, pcsSurvCox, expr=expr, annotations=survAnnot, method=pcsSurvCoxMethod, shrink=alwaysShrink, maxPCs=maxPCs)
+  cliques <- clipper:::extractCliquesFromDag(graph)
+  results <- lapply(cliques, pcsSurvCox, expr=expr, annotations=survAnnot, method=pcsSurvCoxMethod, shrink=alwaysShrink, maxPCs=maxPCs, survFormula = survFormula)
   alphas <- sapply(results, function(x) x$pvalue)
   zlist  <- lapply(results, function(x) x$zlist)
   names(alphas) <- NULL

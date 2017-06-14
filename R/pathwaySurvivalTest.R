@@ -1,5 +1,5 @@
-pathwaySurvivalTest <- function(expr, survAnnot, graph, root=NULL,
-                                pcsSurvCoxMethod=c("regular", "topological", "sparse"), alwaysShrink=FALSE, maxPCs=10){
+pathwaySurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regular", "topological", "sparse"),
+                                alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~"){
   genes <- nodes(graph)
   genes <- intersect(genes, rownames(expr))
   if (length(genes) <= 3){
@@ -19,7 +19,7 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, root=NULL,
   graph <- graph::subGraph(genes, graph)
   expr <- expr[genes,, drop=FALSE]
 
-  cliques <- clipper:::extractCliquesFromDag(graph, root=root)
+  cliques <- clipper:::extractCliquesFromDag(graph)
 
   maxcliques <- max(sapply(cliques, length))
   shrink <- length(samples) < maxcliques | alwaysShrink
@@ -32,13 +32,13 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, root=NULL,
   set.seed(1234)
   gtpvalue          <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr)))
   set.seed(1234)
-  pvalue            <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=FALSE, cliques=NULL, maxPCs=maxPCs)
+  pvalue            <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=FALSE, cliques=NULL, maxPCs=maxPCs, survFormula = survFormula)
   set.seed(1234)
-  pvalueShinkNoTopo <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=TRUE, cliques=NULL, maxPCs=maxPCs)
+  pvalueShinkNoTopo <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=TRUE, cliques=NULL, maxPCs=maxPCs, survFormula = survFormula)
   set.seed(1234)
-  pvalueTopo        <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=FALSE, cliques=cliques, maxPCs=maxPCs)
+  pvalueTopo        <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=FALSE, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula)
   set.seed(1234)
-  pvalueTopoShrink  <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=TRUE, cliques=cliques, maxPCs=maxPCs)
+  pvalueTopoShrink  <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=TRUE, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula)
 
   new("survPath",
       pvalues = list(gtPvalue=gtpvalue, regPvalue=pvalue, regShrinkPvalue=pvalueShinkNoTopo, topoPvalue=pvalueTopo, topoShrinkPvalue=pvalueTopoShrink),

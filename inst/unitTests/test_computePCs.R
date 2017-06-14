@@ -12,15 +12,12 @@ ann <- ann[samples,, drop=FALSE]
 
 time <- computeDays(ann[,1:2])
 events <- as.numeric(ann[,3])
-isto <- ann[,"Isto"]
-grade <- ann[,"Grado"]
 
-survAnnot <- data.frame(days=time, status=events, grade=grade,
-                        isto=isto, row.names=samples)
+survAnnot <- data.frame(days=time, status=events, row.names=samples)
 
 k <- pathways("hsapiens", "kegg")
-k <- convertIdentifiers(k, "entrez")
-graph <- pathwayGraph(k[["Pathways in cancer"]])
+p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
+graph <- pathwayGraph(p)
 
 genes <- intersect(graph::nodes(graph), row.names(exp))
 graph <- graph::subGraph(genes, graph)
@@ -29,15 +26,15 @@ expr <- exp[genes, , drop=FALSE]
 test_computePCs_topological <- function(){
   cliques <- clipper:::extractCliquesFromDag(graph, root=NULL)
   test <- computePCs(t(expr), shrink=FALSE, method="topological", cliques=cliques, maxPCs=10)
-  checkEqualsNumeric(dim(test$x), c(73,73)) ##
+  checkEqualsNumeric(dim(test$x), c(73,10)) ##
 }
 
 test_computePCs_regular <- function(){
   test <- computePCs(t(expr), shrink=FALSE, method="regular", maxPCs=10)
-  checkEqualsNumeric(dim(test$x), c(73,73)) ##
+  checkEqualsNumeric(dim(test$x), c(73,10)) ##
 }
 
 test_computePCs_sparse <- function(){
   test <- computePCs(t(expr), shrink=FALSE, method="sparse", maxPCs=10)
-  checkEqualsNumeric(dim(test$x), c(73,73)) ##
+  checkEqualsNumeric(dim(test$x), c(73,10)) ##
 }

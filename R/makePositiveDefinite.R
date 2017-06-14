@@ -4,7 +4,7 @@ makePositiveDefinite<-function(m1, m2=NULL, m3=NULL, threshold=0.1){
     eig<-min(round(eigen(m1)$values,2))
     
   } else {
-    if (any(is.null(m2,m3))) stop("Both m2 and m3 are needed")
+    if (any(is.null(c(m2,m3)))) stop("Both m2 and m3 are needed")
     
     if (!(ncol(m1)==nrow(m1)) | !(ncol(m2)==nrow(m2)) | (!(ncol(m3)==nrow(m3)))) 
       stop("the matrices are not square")
