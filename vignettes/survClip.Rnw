@@ -23,8 +23,8 @@ cppr <- packageDescription("survClip")
 \section{\textit{survClip}: pathway based survival analysis}
 
 \subsection{\textit{survClip} in a nutshell}
-Many times it is of utmost importance to find genes that are prognostic markers. What about finding molecular circuits (circuits defined as small clusters of genes of the same pathway)?
-That why we devised \textit{survClip}. The package include 2 main functions that allow to predict if a given pathway is relevant for patients' survival and which is the best candidate circuit.
+In the field of molecular medicine, it is of utmost importance to find genes that are prognostic markers. What about finding molecular circuits so circuits defined as small clusters of genes of the same pathway that has the ability to predict patients' outcome?
+That is why we devised \textit{survClip}. The package include 2 main functions that allow to predict if a given pathway is relevant for patients' survival and which are the best candidate circuits.
 
 \subsection{Pathway Analysis}
 In this section we describe the analysis of a toy example based on EOC stage I.
@@ -63,13 +63,13 @@ graph <- graph::subGraph(genes, graph)
 expr <- exp[genes, , drop=FALSE]
 @
 
-We are ready to run the pathway analysis. In this case we choose to evaluate the first three pricipal components. The pcsSurvCoxMethod argument is in the default set to "regular" which means that a normal PCA is done. In this example we use the 'topological' method. In this case the topology of the pathway is taken into account when computing PCs.
+We are ready to run the pathway analysis. In this case we choose to evaluate the first three pricipal components. The \textit{pcsSurvCoxMethod} argument is in the default set to 'regular' which means that a normal PCA is done. In this example we use the 'topological' method. In this case the topology of the pathway is taken into account when computing PCs.
 <<runPathwaySurvClip>>=
 testPath <- pathwaySurvivalTest(expr, survAnnot, pcsSurvCoxMethod="topological", graph, maxPCs=3)
 testPath
 @
 
-\subsection{Circuit analysis}
+\subsection{Circuits analysis}
 We implemented a second test. It is based on the decomposition of the pathway in the cliques. Each cliques is than tested. There are two tests: the regular one, that is based on a classical PCA. The second one is called sparse. The latter is slower but using the penalization it allows to detect hidden signals.
 
 <<runCliqueSurvivalTest>>=
