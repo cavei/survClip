@@ -21,8 +21,12 @@ cliqueSurvivalTest <- function(expr, graph, survAnnot, pcsSurvCoxMethod=c("regul
   # clipper Function to import
   cliques <- clipper:::extractCliquesFromDag(graph)
   results <- lapply(cliques, pcsSurvCox, expr=expr, annotations=survAnnot, method=pcsSurvCoxMethod, shrink=alwaysShrink, maxPCs=maxPCs, survFormula = survFormula)
-  alphas <- sapply(results, function(x) x$pvalue)
-  zlist  <- lapply(results, function(x) x$zlist)
+  alphas  <- sapply(results, function(x) x$pvalue)
+  zlist   <- lapply(results, function(x) x$zlist)
+  cld     <- lapply(results, function(x) x$loadings)
+  coxObjs <- lapply(results, function(x) x$coxObj)
+  exprs   <- lapply(cliques, function(cls) {expr[cls, , drop=F]})
+  
   names(alphas) <- NULL
-  new("survCliques", alphas=alphas, zlist=zlist, cliques=cliques)
+  new("survCliques", alphas=alphas, zlist=zlist, cliques=cliques, coxObjs=coxObjs, cliquesLoadings=cld, cliquesExpr=exprs)
 }

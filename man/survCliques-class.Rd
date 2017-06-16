@@ -7,7 +7,7 @@
 \description{Descriptor for survival clique analysis}
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("survCliques", ...)}.
-alphas=alphas, zlist=zlist, cliques=cliques
+alphas=alphas, zlist=zlist, cliques=cliques, cliquesLoadings=cliquesLoadings
 }
 \section{Slots}{
   \describe{
@@ -15,6 +15,9 @@ alphas=alphas, zlist=zlist, cliques=cliques
     \item{\code{alphas}:}{Object of class \code{"numeric"} pvalues }
     \item{\code{zlist}:}{Object of class \code{"list"} zlist }
     \item{\code{cliques}:}{Object of class \code{"list"} cliques }
+    \item{\code{coxObjs}:}{Object of class \code{"list"} coxObjs }
+    \item{\code{cliquesLoadings}:}{Object of class \code{"list"} cliques loadings }
+    \item{\code{cliquesExpr}:}{Object of class \code{"list"} cliques expression }
   }
 }
 \section{Extends}{

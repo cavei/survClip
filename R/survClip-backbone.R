@@ -5,7 +5,7 @@ survivalcox <- function(coxObj, formula){
   zlist <- coxSummary$coefficients[,"Pr(>|z|)"]
   names(zlist) <- row.names(coxSummary$coefficients)
   pvalue <- coxSummary$logtest["pvalue"]
-  return(list(pvalue=pvalue, zlist=zlist))
+  return(list(pvalue=pvalue, zlist=zlist, coxObj=coxObj))
 }
 
 computeDays <- function(timeTable) {

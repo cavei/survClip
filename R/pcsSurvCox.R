@@ -11,11 +11,13 @@ pcsSurvCox <- function(genes, expr, annotations, method=c("regular", "topologica
     pcs <- computePCs(expr, shrink=shrink, method=method, cliques=cliques, maxPCs=maxPCs)
   } else {
     colnames(expr) <- "PC1"
-    pcs <- list(x=expr, sdev=sd(expr))
+    pcs <- list(x=expr, sdev=sd(expr), loadings=1)
   }
   
   comps <- paste(colnames(pcs$x), collapse ="+")
   formula = as.formula(paste(survFormula, comps, sep=" "))
   coxObj <- data.frame(pcs$x, annotations)
-  survivalcox(coxObj, formula)
+  scox <- survivalcox(coxObj, formula)
+  scox$loadings <- pcs$loadings
+  scox
 }

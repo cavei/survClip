@@ -1,7 +1,10 @@
 survCliques <- setClass("survCliques", package = "survClip",
                     slots = c(alphas  = "numeric",
                               zlist   = "list", 
-                              cliques = "list"),
+                              cliques = "list",
+                              coxObjs = "list",
+                              cliquesLoadings = "list",
+                              cliquesExpr = "list"),
                     contains = "list"
 )
 
