@@ -80,7 +80,7 @@ testCliques
 Now to make easier and eaiser the formulation of hypothesis, we implement a function that extract those genes that are correlated the most with the significant PCs. In this example we keep it to the default values, thr=0.05, that is a classical significance threshold; n=5, that means that we choose up to 5 gene among the most correlated ones.
 
 <<getSurvivalGenes>>=
-geneToSigCliques<- getMostCorrelatedGenes(testCliques)
+geneToSigCliques<- getTopGenes(testCliques)
 length(geneToSigCliques)
 geneToSigCliques[[1]]
 @
