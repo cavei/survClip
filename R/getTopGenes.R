@@ -39,3 +39,31 @@ getTopGenes <- function(scObj, thr=0.05, n=5, corThr=0.6) {
     list(cliqueId=clId, loadingsBased=ldCor, correlationBased=pcCor)
   })
 }
+
+getTopLoadGenes <- function(scObj, thr=0.05, n=5, loadThr=0.6) {
+  idx <- which(scObj@alphas <= thr)
+  if (length(idx) == 0)
+    return(NULL)
+  
+  ld <- scObj@cliquesLoadings
+  z  <- scObj@zlist
+  coxObjs <- scObj@coxObjs
+  exprs <- scObj@cliquesExpr
+  
+  corGenes <- lapply(idx, function(clId){
+    loadings <- ld[[clId]]
+    coxObj <- coxObjs[[clId]]
+    pcs <- names(which(z[[clId]] <= thr))
+    ldCors <- correlateGeneToPC(pcs, loadings, n, loadThr)
+    if (length(ldCors)==0)
+      return(c(clId, "NULL", "NULL"))
+    
+    t(sapply(ldCors, function(ldCor) {
+    rm <- cbind(clId, ldCor, pc=colnames(ldCor))
+    row.names(rm) <- row.names(ldCor)
+    colnames(rm)[2] <- "ld"
+    rm
+    }))
+  })
+  do.call(rbind, corGenes)
+}
