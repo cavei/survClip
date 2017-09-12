@@ -54,16 +54,20 @@ getTopLoadGenes <- function(scObj, thr=0.05, n=5, loadThr=0.6) {
     loadings <- ld[[clId]]
     coxObj <- coxObjs[[clId]]
     pcs <- names(which(z[[clId]] <= thr))
-    ldCors <- correlateGeneToPC(pcs, loadings, n, loadThr)
+    ldCors <- survClip:::correlateGeneToPC(pcs, loadings, n, loadThr)
     if (length(ldCors)==0)
       return(c(clId, "NULL", "NULL"))
     
-    t(sapply(ldCors, function(ldCor) {
-    rm <- cbind(clId, ldCor, pc=colnames(ldCor))
-    row.names(rm) <- row.names(ldCor)
-    colnames(rm)[2] <- "ld"
-    rm
-    }))
+    form <- lapply(ldCors, function(ldCor) {
+      rm <- cbind(clId, ldCor, pc=colnames(ldCor))
+      row.names(rm) <- row.names(ldCor)
+      colnames(rm)[2] <- "ld"
+      rm
+    })
+    do.call(rbind, form)
   })
-  do.call(rbind, corGenes)
+  mat <- do.call(rbind, corGenes)
+  data.frame(feature=row.names(mat), clId=mat[,1], geneLoad=mat[,2], whichPC=mat[,3])
+  
 }
+

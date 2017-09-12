@@ -1,7 +1,7 @@
 Package: survClip
 Type: Package
 Title: Survival analysis for pathways
-Version: 0.2.1
+Version: 0.2.2
 Author: Paolo Martini
 Maintainer: Paolo Martini <paolo.cavei@gmail.com>
 Description: Perform topological survival analysis.
@@ -10,5 +10,5 @@ Encoding: UTF-8
 LazyData: true
 Depends:
 Imports: graph, methods, qpgraph, corpcor, globaltest, survival, clipper, rrcov, FactoMineR, elasticnet
-Suggests: RUnit, BiocGenerics, graphite, ALL, hgu95av2.db, MASS, BiocStyle
+Suggests: RUnit, BiocGenerics, graphite, curatedOvarianData, MASS, BiocStyle
 License: AGPL-3

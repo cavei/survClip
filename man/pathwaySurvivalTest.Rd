@@ -3,7 +3,9 @@
 \title{Survival analysis on the whole pathways}
 \description{This function allows to perform servival analysis on pathways. The analysis can be either topological or classical. The analysis is based on data reduction based on Principal Component Analysis and cox survival on the most influent PCs.}
 \usage{
-pathwaySurvivalTest(expr, survAnnot, graph, pcsSurvCoxMethod = c("regular", "topological", "sparse"), alwaysShrink = FALSE, maxPCs = 10, survFormula = "Surv(days, status) ~")
+pathwaySurvivalTest(expr, survAnnot, graph,
+pcsSurvCoxMethod = c("regular", "topological", "sparse"),
+alwaysShrink = FALSE, maxPCs = 10, survFormula = "Surv(days, status) ~")
 }
 \arguments{
   \item{expr}{expression matrix.}

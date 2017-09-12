@@ -1,88 +1,112 @@
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Sending Messages With Gmailr}
+%\usepackage[utf8]{inputenc}
+
 \documentclass{article}
 
-<<style. eval=TRUE, echo=FALSE, results=tex>>=
-BiocStyle::latex()
-@
-
 \begin{document}
-% \VignetteIndexEntry{survClip}
-% \VignetteDepends{survClip}
-
-<<ccpr, include=FALSE, echo=FALSE >>=
-options(keep.source =TRUE, width=60)
-cppr <- packageDescription("survClip")
-@
-
 \SweaveOpts{concordance=TRUE}
 
-\title{survClip package (Version \Sexpr{cppr$Version})}
-\author{Paolo Martini, Enrica Calura and Chiara Romualdi}
+When working with survival analysis the most important things are a good (big enought) batch of patients and an accurate annotations of events and other covariate. Many cancer datasets has these features expecially those collected from TCGA project.
+In R bioconductor, we can find TCGA data about OV cancer in a package called \textit{curatedOvarianData}.
+In this brief example we are going to give an overview of survClip package.
 
-\maketitle
-
-\section{\textit{survClip}: pathway based survival analysis}
-
-\subsection{\textit{survClip} in a nutshell}
-In the field of molecular medicine, it is of utmost importance to find genes that are prognostic markers. What about finding molecular circuits so circuits defined as small clusters of genes of the same pathway that has the ability to predict patients' outcome?
-That is why we devised \textit{survClip}. The package include 2 main functions that allow to predict if a given pathway is relevant for patients' survival and which are the best candidate circuits.
-
-\subsection{Pathway Analysis}
-In this section we describe the analysis of a toy example based on EOC stage I.
-<<loadDatasetAndPathway>>=
-library(survival)
-library(survClip)
-data(exp)
-data(ann)
-samples <- intersect(colnames(exp),row.names(ann))
-exp <- exp[,samples, drop=FALSE]
-ann <- ann[samples,, drop=FALSE]
-head(ann)
+We should start from loading the library and the dataset. We used the microarray dataset beacuse RNASeq data row counts are not available. For an example using RNASeq data please refer to our online example at \textit{romauldi.bio.unipd.it}.
+<<loadingData>>=
+# setwd("Documents/work/survClip/vignettes")
+library(curatedOvarianData)
+data(TCGA_eset)
+TCGA_eset
 @
 
-Now we go and create the survival annotation. To this hand, we insert in the package a function that given an interval between two dates computes the days.
+This dataset consist of ~13000 genes measured over 578 patients. All the patients has associated clinical data that include relapse events, vital status and survival rate. In the following chunck of code we are going to format the clinical data of the phenoData to get them ready to use in survClip.
 
-<<createSurvivalAnnotation>>=
-time <- computeDays(ann[,1:2])
-events <- as.numeric(ann[,3])
-survAnnot <- data.frame(days=time, status=events, row.names=samples)
+<<formatClinicals>>=
+names(phenoData(TCGA_eset)@data)
+annot <- phenoData(TCGA_eset)@data
+
+pid <- annot$unique_patient_ID
+days.recurrence <- annot$days_to_tumor_recurrence
+status.recurrence <- annot$recurrence_status
+days <- annot$days_to_death
+status <- annot$vital_status
+
+table(status.recurrence)
+table(status)
+
+status[status=="living"] <- 0
+status[status=="deceased"] <- 1
+
+status.recurrence[status.recurrence=="norecurrence"] <- 0
+status.recurrence[status.recurrence=="recurrence"] <- 1
+
+survAnnot.os <- data.frame(status=as.numeric(status), days=as.numeric(days), row.names=pid, stringsAsFactors=F)
+survAnnot.pfs <- data.frame(status=as.numeric(status.recurrence), days=as.numeric(days.recurrence), row.names=pid, stringsAsFactors=F)
 @
 
-Now we load the pathway form KEGG. We chosed "Pathways in cancer".
+As results, we build two data.frames that represent the minimal information to run survClip analysis: vital status (status) and the days to death or last follow up (days) fro each patients.
+In this example we are going to analyze the overall survival. We remove NAs and we sort the samples and the expression matrix according to the survival annotation.
 
-<<downloadThePathwayUsingGraphite>>=
+<<chiaraChunk>>=
+survAnnot <- na.omit(survAnnot.os)
+exp <- exprs(TCGA_eset)
+samples <- colnames(exp)
+samples <- gsub('.', replacement = '-', fixed = T, x = samples)
+colnames(exp)<- samples
+samples <- intersect(samples, row.names(survAnnot))
+survAnnot <- survAnnot[samples,]
+exp <- exp[, samples, drop=F]
+@
+
+The expression data are almost ready. We go rapdly througth a step of normalization with limma.
+
+<<summarizeGeneExpression>>=
+library(limma)
+expN <- normalizeQuantiles(exp)
+@
+
+Now we can analyze this subset of patients with survClip. First we need to load pathways. The source of pathway we choose is KEGG form graphite Bioconductor package.
+
+<<analysisSurvClipPrepare>>=
 library(graphite)
-k <- pathways("hsapiens", "kegg")
-p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
-graph <- pathwayGraph(p)
+kegg<- pathways("hsapiens", "kegg")
 @
 
-Now we shaped the dataset and the pathway according to the genes that are shared between them.
-<<filterGenes>>=
-genes <- intersect(graph::nodes(graph), row.names(exp))
-graph <- graph::subGraph(genes, graph)
-expr <- exp[genes, , drop=FALSE]
+Then we need to convert the identifier in geneSymbol since our matrix has been summarized by gene symbols.
+
+<<analysisSurvClipPrepare1>>=
+cancerPathways <- names(kegg)[grep("cancer", names(kegg))]
+kegg <- convertIdentifiers(kegg[cancerPathways], "symbol")
 @
 
-We are ready to run the pathway analysis. In this case we choose to evaluate the first three pricipal components. The \textit{pcsSurvCoxMethod} argument is in the default set to 'regular' which means that a normal PCA is done. In this example we use the 'topological' method. In this case the topology of the pathway is taken into account when computing PCs.
-<<runPathwaySurvClip>>=
-testPath <- pathwaySurvivalTest(expr, survAnnot, pcsSurvCoxMethod="topological", graph, maxPCs=3)
-testPath
+At the moment we have all we need to perform the analysis with survClip: an expression matrix, survival annotations and a graph. Let's do it!
+To speed up analysis we are going to extract a selection of cancer related pathway. In the followings, you will find how to run whole pathway survival analysis. To improve readability I reformat results in a table.
+
+<<wholePathway>>=
+library(survClip)
+cancerRelated<-lapply(cancerPathways, function(p) {
+  graph <- pathwayGraph(kegg[[p]])
+  pathwaySurvivalTest(expN, survAnnot, graph,
+                      pcsSurvCoxMethod = "topological", maxPCs=5)
+})
+
+pMat <-t(sapply(cancerRelated, function(cr) {
+  crp <- cr@pvalues
+  sapply(crp, function(x) {x[[1]]})
+}))
+row.names(pMat)<- cancerPathways
+pMat[1:10,4:5]
 @
 
-\subsection{Circuits analysis}
-We implemented a second test. It is based on the decomposition of the pathway in the cliques. Each cliques is than tested. There are two tests: the regular one, that is based on a classical PCA. The second one is called sparse. The latter is slower but using the penalization it allows to detect hidden signals.
+Among the other, "Breast cancer" pathway is particularly significan. Let's try to decompose the pathway and see the survival modules. Please note that it is not mandatory to perform whole pathway test in advance.
 
-<<runCliqueSurvivalTest>>=
-testCliques <- cliqueSurvivalTest(expr, graph, survAnnot, pcsSurvCoxMethod="sparse", maxPCs=3)
-testCliques
-@
+<<cliqueSurvivalTest>>=
+pathName = "Breast cancer"
+graph <- pathwayGraph(kegg[[pathName]])
 
-Now to make easier and eaiser the formulation of hypothesis, we implement a function that extract those genes that are correlated the most with the significant PCs. In this example we keep it to the default values, thr=0.05, that is a classical significance threshold; n=5, that means that we choose up to 5 gene among the most correlated ones.
+ct <- cliqueSurvivalTest(expN, graph, survAnnot, pcsSurvCoxMethod = "sparse", maxPCs=5)
+getTopLoadGenes(ct)
 
-<<getSurvivalGenes>>=
-geneToSigCliques<- getTopGenes(testCliques)
-length(geneToSigCliques)
-geneToSigCliques[[1]]
 @
 
 \end{document}

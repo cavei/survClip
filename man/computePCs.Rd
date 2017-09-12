@@ -5,7 +5,8 @@
 \alias{compPCs}
 \title{For internal usage only. Compute principal components according to the chosen method.}
 \description{For internal usage. Compute the PCs according to 3 methods: regular, ropological, sparse.}
-\usage{computePCs(exp, shrink, method = c("regular", "topological", "sparse"), cliques = NULL, maxPCs)}
+\usage{computePCs(exp, shrink, method = c("regular", "topological", "sparse"),
+cliques = NULL, maxPCs)}
 \arguments{
   \item{exp}{exp}
   \item{shrink}{shrink boolean}

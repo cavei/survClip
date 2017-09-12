@@ -5,17 +5,13 @@
 Expression dataset.
 }
 \description{
-Expression dataset for survival test.
+Toy example of an expression dataset for survival test.
 }
 \usage{data("exp")}
 \format{
-  A data frame with 0 observations on the following 2 variables.
-  \describe{
-    \item{\code{x}}{a numeric vector}
-    \item{\code{y}}{a numeric vector}
-  }
+  A matrix with 246 genes (rows) measured across 73 patients (columns).
 }
 \examples{
-data(Exp)
+data(exp)
 }
 \keyword{datasets}

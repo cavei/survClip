@@ -2,7 +2,8 @@
 \alias{cliqueSurvivalTest}
 \title{Perform survival test on all the cliques of the graph.}
 \description{Given a pathway and a matrix with annotation pData compute survival test.}
-\usage{cliqueSurvivalTest(expr, graph, survAnnot, pcsSurvCoxMethod = c("regular", "sparse"), alwaysShrink = FALSE, maxPCs = 10, survFormula = "Surv(days, status) ~")}
+\usage{cliqueSurvivalTest(expr, graph, survAnnot, pcsSurvCoxMethod = c("regular", "sparse"),
+alwaysShrink = FALSE, maxPCs = 10, survFormula = "Surv(days, status) ~")}
 \arguments{
   \item{expr}{expression matrix}
   \item{graph}{a graphNEL object}
