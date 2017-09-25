@@ -1,11 +1,35 @@
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{Sending Messages With Gmailr}
-%\usepackage[utf8]{inputenc}
-
 \documentclass{article}
+
+\usepackage{graphics}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+\usepackage[utf8]{inputenc}
+
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{survClip}
+%\VignetteDepends{graphite}
+%\VignetteDepends{clipper}
+%\VignetteDepends{survClip}
+%\VignetteDepends{curatedOvarianData}
+
+<<style, eval=TRUE, echo=FALSE, results=tex>>=
+BiocStyle::latex()
+@
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
+
+<<header, include=FALSE, echo=FALSE>>=
+options(keep.source=TRUE, width=60)
+header <- packageDescription("survClip")
+@
+
+\title{survClip package (Version \Sexpr{header$version})}
+\author{Paolo Martini}
+
+\maketitle
+
+\section{\textbf{survClip}: finding prognostic modules exploiting pathway topology}
 
 When working with survival analysis the most important things are a good (big enought) batch of patients and an accurate annotations of events and other covariate. Many cancer datasets has these features expecially those collected from TCGA project.
 In R bioconductor, we can find TCGA data about OV cancer in a package called \textit{curatedOvarianData}.
@@ -19,7 +43,7 @@ data(TCGA_eset)
 TCGA_eset
 @
 
-This dataset consist of ~13000 genes measured over 578 patients. All the patients has associated clinical data that include relapse events, vital status and survival rate. In the following chunck of code we are going to format the clinical data of the phenoData to get them ready to use in survClip.
+This dataset consist of \~13000 genes measured over 578 patients. All the patients has associated clinical data that include relapse events, vital status and survival rate. In the following chunck of code we are going to format the clinical data of the phenoData to get them ready to use in survClip.
 
 <<formatClinicals>>=
 names(phenoData(TCGA_eset)@data)
@@ -40,8 +64,10 @@ status[status=="deceased"] <- 1
 status.recurrence[status.recurrence=="norecurrence"] <- 0
 status.recurrence[status.recurrence=="recurrence"] <- 1
 
-survAnnot.os <- data.frame(status=as.numeric(status), days=as.numeric(days), row.names=pid, stringsAsFactors=F)
-survAnnot.pfs <- data.frame(status=as.numeric(status.recurrence), days=as.numeric(days.recurrence), row.names=pid, stringsAsFactors=F)
+survAnnot.os <- data.frame(status=as.numeric(status), days=as.numeric(days),
+                           row.names=pid, stringsAsFactors=F)
+survAnnot.pfs <- data.frame(status=as.numeric(status.recurrence), days=as.numeric(days.recurrence),
+                            row.names=pid, stringsAsFactors=F)
 @
 
 As results, we build two data.frames that represent the minimal information to run survClip analysis: vital status (status) and the days to death or last follow up (days) fro each patients.
@@ -106,7 +132,6 @@ graph <- pathwayGraph(kegg[[pathName]])
 
 ct <- cliqueSurvivalTest(expN, graph, survAnnot, pcsSurvCoxMethod = "sparse", maxPCs=5)
 getTopLoadGenes(ct)
-
 @
 
 \end{document}
