@@ -32,7 +32,10 @@ setMethod("show",
 
 
 survPath <- setClass("survPath", package = "survClip",
-                     slots = c(pvalues = "list",
+                     slots = c(pvalue = "numeric",
+                               zlist = "numeric",
+                               coxObj = "data.frame",
+                               loadings = "matrix",
                                method  = "character"),
                      contains = "list"
 )
@@ -40,6 +43,7 @@ survPath <- setClass("survPath", package = "survClip",
 setMethod("show",
           signature = "survPath",
           definition = function(object) {
-            cat(paste0("Pathway processed with ", object@method, " method\n   pvalue: ", object@pvalues$regPvalue$pvalue, "\n"))
+            cat(paste0("Pathway processed with ", object@method, " method\n   pvalue: ", object@pvalue, "\n"))
             invisible(NULL)
           })
+

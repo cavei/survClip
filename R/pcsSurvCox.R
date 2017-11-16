@@ -1,5 +1,4 @@
-pcsSurvCox <- function(genes, expr, annotations, method=c("regular", "topological", "sparse"), shrink=FALSE, cliques=NULL, maxPCs=10,
-                            survFormula = "Surv(days, status) ~") {
+pcsSurvCox <- function(genes, expr, annotations, method=c("regular", "topological", "sparse"), shrink=FALSE,cliques=NULL, maxPCs=10,survFormula = "Surv(days, status) ~") {
   expr <- expr[genes,, drop=FALSE]
   
   if (NROW(expr) == 0) {

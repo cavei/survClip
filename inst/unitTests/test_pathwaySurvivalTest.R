@@ -3,6 +3,7 @@ library(survival)
 data(exp)
 data(survAnnot)
 
+row.names(exp) <- paste0("ENTREZID:", row.names(exp))
 k <- pathways("hsapiens", "kegg")
 p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
 graph <- pathwayGraph(p)
@@ -14,6 +15,6 @@ expr <- exp[genes, , drop=FALSE]
 test_pathwaySurvivalTest <- function(){
   set.seed(1234)
   test <- pathwaySurvivalTest(expr, survAnnot, graph, maxPCs=2)
-  checkTrue(length(test@pvalues) == 5)
+  checkTrue(length(test@zlist) == 2)
 }
 

@@ -14,6 +14,7 @@
 
 <<style, eval=TRUE, echo=FALSE, results=tex>>=
 BiocStyle::latex()
+# setwd("Documents/work/survClip/vignettes")
 @
 
 \begin{document}
@@ -24,26 +25,25 @@ options(keep.source=TRUE, width=60)
 header <- packageDescription("survClip")
 @
 
-\title{survClip package (Version \Sexpr{header$version})}
+\title{survClip package (Version \Sexpr{header$Version})}
 \author{Paolo Martini}
 
 \maketitle
 
 \section{\textbf{survClip}: finding prognostic modules exploiting pathway topology}
 
-When working with survival analysis the most important things are a good (big enought) batch of patients and an accurate annotations of events and other covariate. Many cancer datasets has these features expecially those collected from TCGA project.
+When working with survival analysis, the most important things are a good (big enought) batch of patients and an accurate annotation of events and other covariates. Many cancer datasets have these features, expecially those collected from TCGA project.
 In R bioconductor, we can find TCGA data about OV cancer in a package called \textit{curatedOvarianData}.
-In this brief example we are going to give an overview of survClip package.
+In this brief example, we are going to give an overview of survClip package.
 
-We should start from loading the library and the dataset. We used the microarray dataset beacuse RNASeq data row counts are not available. For an example using RNASeq data please refer to our online example at \textit{romauldi.bio.unipd.it}.
+We start by loading the library and the dataset. We used the microarray dataset because RNASeq data row counts are not available. For an example with RNASeq data please refer to our online example at \textit{romauldi.bio.unipd.it}.
 <<loadingData>>=
-# setwd("Documents/work/survClip/vignettes")
 library(curatedOvarianData)
 data(TCGA_eset)
 TCGA_eset
 @
 
-This dataset consist of \~13000 genes measured over 578 patients. All the patients has associated clinical data that include relapse events, vital status and survival rate. In the following chunck of code we are going to format the clinical data of the phenoData to get them ready to use in survClip.
+This dataset consist of $~$13000 genes measured over 578 patients. All the patients have associated clinical data that include relapse events, vital status and survival rate. In the following chunck of code, we format the clinical data of the phenoData to get them suitable to use in survClip.
 
 <<formatClinicals>>=
 names(phenoData(TCGA_eset)@data)
@@ -70,8 +70,8 @@ survAnnot.pfs <- data.frame(status=as.numeric(status.recurrence), days=as.numeri
                             row.names=pid, stringsAsFactors=F)
 @
 
-As results, we build two data.frames that represent the minimal information to run survClip analysis: vital status (status) and the days to death or last follow up (days) fro each patients.
-In this example we are going to analyze the overall survival. We remove NAs and we sort the samples and the expression matrix according to the survival annotation.
+As results, we build two data.frames that represent the minimal information to run survClip analysis: vital status (status) and the days to death or last follow up (days) for each patient.
+In this example, we analyze the overall survival. We remove NAs and we sort the samples and the expression matrix according to the survival annotation.
 
 <<chiaraChunk>>=
 survAnnot <- na.omit(survAnnot.os)
@@ -84,44 +84,46 @@ survAnnot <- survAnnot[samples,]
 exp <- exp[, samples, drop=F]
 @
 
-The expression data are almost ready. We go rapdly througth a step of normalization with limma.
+The expression data are almost ready. We go rapidly through a step of normalization with limma.
 
 <<summarizeGeneExpression>>=
 library(limma)
 expN <- normalizeQuantiles(exp)
 @
 
-Now we can analyze this subset of patients with survClip. First we need to load pathways. The source of pathway we choose is KEGG form graphite Bioconductor package.
+Now we can analyze this subset of patients with survClip. First, we need to load pathways. The source of pathway we choose is KEGG from graphite Bioconductor package.
 
 <<analysisSurvClipPrepare>>=
 library(graphite)
 kegg<- pathways("hsapiens", "kegg")
 @
 
-Then we need to convert the identifier in geneSymbol since our matrix has been summarized by gene symbols.
+Then, we need to convert the identifier in geneSymbol since our matrix has been summarized by gene symbols.
 
 <<analysisSurvClipPrepare1>>=
 cancerPathways <- names(kegg)[grep("cancer", names(kegg))]
 kegg <- convertIdentifiers(kegg[cancerPathways], "symbol")
 @
 
-At the moment we have all we need to perform the analysis with survClip: an expression matrix, survival annotations and a graph. Let's do it!
-To speed up analysis we are going to extract a selection of cancer related pathway. In the followings, you will find how to run whole pathway survival analysis. To improve readability I reformat results in a table.
+At this stage, we have all the ingriedents needed to perform the analysis with survClip: an expression matrix, survival annotations and a graph. Let's do it!
+To speed up analysis we are going to extract a selection of cancer related pathways. In the following, you will find how to run whole pathway survival analysis. To improve readability, I reformat results in a table.
 
 <<wholePathway>>=
 library(survClip)
+row.names(expN) <- paste0("SYMBOL:",row.names(expN))
+
 cancerRelated<-lapply(cancerPathways, function(p) {
   graph <- pathwayGraph(kegg[[p]])
   pathwaySurvivalTest(expN, survAnnot, graph,
                       pcsSurvCoxMethod = "topological", maxPCs=5)
 })
 
-pMat <-t(sapply(cancerRelated, function(cr) {
-  crp <- cr@pvalues
-  sapply(crp, function(x) {x[[1]]})
-}))
-row.names(pMat)<- cancerPathways
-pMat[1:10,4:5]
+names(cancerRelated) <- cancerPathways
+pvalues <-sapply(cancerRelated, function(cr) {
+  cr@pvalue
+})
+names(pvalues)<- cancerPathways
+pvalues
 @
 
 Among the other, "Breast cancer" pathway is particularly significan. Let's try to decompose the pathway and see the survival modules. Please note that it is not mandatory to perform whole pathway test in advance.
@@ -133,5 +135,8 @@ graph <- pathwayGraph(kegg[[pathName]])
 ct <- cliqueSurvivalTest(expN, graph, survAnnot, pcsSurvCoxMethod = "sparse", maxPCs=5)
 getTopLoadGenes(ct)
 @
+
+Calling the function "getTopLoadGenes" we inspect every significant cliques to get the main driver genes.
+
 
 \end{document}

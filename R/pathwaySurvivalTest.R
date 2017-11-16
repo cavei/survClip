@@ -29,18 +29,8 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regu
   
   method = pcsSurvCoxMethod[1]
   
-  set.seed(1234)
-  gtpvalue          <- globaltest::p.value(globaltest::gt(Surv(days, events==1), alternative=t(expr)))
-  set.seed(1234)
-  pvalue            <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=FALSE, cliques=NULL, maxPCs=maxPCs, survFormula = survFormula)
-  set.seed(1234)
-  pvalueShinkNoTopo <- pcsSurvCox(genes, expr, survAnnot, method="regular", shrink=TRUE, cliques=NULL, maxPCs=maxPCs, survFormula = survFormula)
-  set.seed(1234)
-  pvalueTopo        <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=FALSE, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula)
-  set.seed(1234)
-  pvalueTopoShrink  <- pcsSurvCox(genes, expr, survAnnot, method="topological", shrink=TRUE, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula)
-
+  res <- pcsSurvCox(genes, expr, survAnnot, method=method, shrink=alwaysShrink, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula)
   new("survPath",
-      pvalues = list(gtPvalue=gtpvalue, regPvalue=pvalue, regShrinkPvalue=pvalueShinkNoTopo, topoPvalue=pvalueTopo, topoShrinkPvalue=pvalueTopoShrink),
+      pvalue = res$pvalue, zlist = res$zlist, coxObj = res$coxObj, loadings = res$loadings,
       method=method)
 }
