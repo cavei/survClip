@@ -9,6 +9,6 @@ Description: Perform topological survival analysis.
 Encoding: UTF-8
 LazyData: true
 Depends:
-Imports: graph, methods, qpgraph, corpcor, globaltest, survival, clipper, rrcov, FactoMineR, elasticnet
+Imports: checkmate, graph, methods, qpgraph, corpcor, survival, clipper, rrcov, FactoMineR, elasticnet
 Suggests: RUnit, BiocGenerics, graphite, curatedOvarianData, MASS, BiocStyle
 License: AGPL-3

@@ -1,4 +1,4 @@
-cliqueSurvivalTest <- function(expr, graph, survAnnot, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~") {
+cliqueSurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~") {
   if (!is.data.frame(survAnnot)){
     stop("'annotations' must be a 'data.frame' object.")
   }

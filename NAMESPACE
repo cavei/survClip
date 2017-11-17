@@ -3,7 +3,7 @@ importFrom("FactoMineR","estim_ncp")
 importFrom("methods", "new")
 importFrom("stats", "as.formula", "median", "na.omit", "cor", "cov", "sd")
 importFrom("utils", "head")
-import(corpcor, graph, qpgraph, rrcov, survival)
+import(corpcor, graph, qpgraph, rrcov, survival, checkmate)
 ## exportPattern("^[[:alpha:]]+")
 export(pathwaySurvivalTest, cliqueSurvivalTest,
        computeDays, computePCs, compPCs, topoCompPCs,

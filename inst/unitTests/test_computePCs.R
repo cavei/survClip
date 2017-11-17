@@ -2,6 +2,7 @@ library(graphite)
 library(survival)
 data(exp)
 
+row.names(exp) <- paste0("ENTREZID:", row.names(exp))
 k <- pathways("hsapiens", "kegg")
 p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
 graph <- pathwayGraph(p)

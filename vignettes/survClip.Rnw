@@ -11,6 +11,7 @@
 %\VignetteDepends{clipper}
 %\VignetteDepends{survClip}
 %\VignetteDepends{curatedOvarianData}
+%\usepackage[UTF-8]{inputenc}
 
 <<style, eval=TRUE, echo=FALSE, results=tex>>=
 BiocStyle::latex()
@@ -132,7 +133,7 @@ Among the other, "Breast cancer" pathway is particularly significan. Let's try t
 pathName = "Breast cancer"
 graph <- pathwayGraph(kegg[[pathName]])
 
-ct <- cliqueSurvivalTest(expN, graph, survAnnot, pcsSurvCoxMethod = "sparse", maxPCs=5)
+ct <- cliqueSurvivalTest(expN, survAnnot, graph, pcsSurvCoxMethod = "sparse", maxPCs=5)
 getTopLoadGenes(ct)
 @
 
