@@ -4,8 +4,8 @@
 \alias{survPath}
 
 \title{Class \code{"survPath"}}
-\description{Class for survival pathway analysis.}\
-section{Objects from the Class}{
+\description{Class for survival pathway analysis.}
+\section{Objects from the Class}{
   Objects can be created by calls of the form \code{new("survPath", ...)}.
   pvalue, zlist, coxObj, loadings and the method used.
 }

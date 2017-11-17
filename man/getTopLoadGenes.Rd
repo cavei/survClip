@@ -16,7 +16,7 @@
   survival process. The relevance of a gene is based on PC loadings.}
 
 \value{a data.frame organized as follows: 
-  \arguments{
+  \enumerate{
     \item{feature}{gene names}
     \item{clId}{clique id}
     \item{geneLoad}{gene loading}
