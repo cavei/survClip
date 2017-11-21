@@ -4,7 +4,7 @@ Title: Survival Analysis for Pathways
 Version: 0.2.3
 Author: Paolo Martini
 Maintainer: Paolo Martini <paolo.cavei@gmail.com>
-Description: Perform topological survival analysis using pathways.
+Description: SurvClip performs topological survival analysis using pathways. It combines data reduction techniques with graphical models to identify a pathway or a one of its ports that are associated to survival.
 Encoding: UTF-8
 LazyData: true
 Depends: 

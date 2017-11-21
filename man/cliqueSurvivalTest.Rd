@@ -29,10 +29,8 @@ alwaysShrink = FALSE, maxPCs = 10, survFormula = "Surv(days, status) ~")}
 if (require(graphite)) {
   data(exp)
   data(survAnnot)
+  data(graph)
   row.names(exp) <- paste0("ENTREZID:", row.names(exp))
-  k <- pathways("hsapiens", "kegg")
-  p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
-  graph <- pathwayGraph(p)
   genes <- intersect(graph::nodes(graph), row.names(exp))
   graph <- graph::subGraph(genes, graph)
   expr <- exp[genes, , drop=FALSE]
