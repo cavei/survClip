@@ -2,12 +2,9 @@ library(graphite)
 library(survival)
 data(exp)
 data(survAnnot)
+data(graph)
 
 row.names(exp) <- paste0("ENTREZID:", row.names(exp))
-
-k <- pathways("hsapiens", "kegg")
-p <- convertIdentifiers(k[["Pathways in cancer"]], "entrez")
-graph <- pathwayGraph(p)
 
 test_cliqueSurvivalTest <- function(){
 	set.seed(1234)
