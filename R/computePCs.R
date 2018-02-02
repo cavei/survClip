@@ -23,7 +23,7 @@ sparseCompPCs <- function(exp, shrink, k) {
   covmat <- clipper:::estimateExprCov(exp, shrink) ## Consider collapse with the following line!
   covmat <- makePositiveDefinite(covmat)$m1
   paraSingle <- min(round((NCOL(exp)/2)),5) ## Parametri fissi da valutare
-  pcCov <- elasticnet::spca(covmat, K =k, para = rep(paraSingle,k), type = "predictor", sparse = "varnum")
+  pcCov <- elasticnet::spca(covmat, K =k, para = rep(paraSingle,k), type = "Gram", sparse = "varnum") 
   eigenvector  <- pcCov$loadings[, seq_len(k), drop=F]
   scalee <- scale(exp, scale=FALSE)
   npc <- min(dim(exp))
