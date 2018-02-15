@@ -1,17 +1,16 @@
+%\VignetteIndexEntry{survClip}
+%\VignetteDepends{graphite}
+%\VignetteDepends{clipper}
+%\VignetteDepends{survClip}
+%\VignetteDepends{limma}
+%\VignetteDepends{curatedOvarianData}
+
 \documentclass{article}
 
 \usepackage{graphics}
 \usepackage{amsmath}
 \usepackage{indentfirst}
 \usepackage[utf8]{inputenc}
-
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{survClip}
-%\VignetteDepends{graphite}
-%\VignetteDepends{clipper}
-%\VignetteDepends{survClip}
-%\VignetteDepends{curatedOvarianData}
-%\usepackage[UTF-8]{inputenc}
 
 <<style, eval=TRUE, echo=FALSE, results=tex>>=
 BiocStyle::latex()
