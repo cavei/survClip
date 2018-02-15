@@ -3,8 +3,10 @@ topoCompPCs <- function(exp, shrink, cliques, k) {
     stop("Cliques argument is needed")
   nms <- colnames(exp)
   covmat <- clipper:::estimateExprCov(exp, shrink) ## Consider collapse with the following line!
-  covmat <- makePositiveDefinite(covmat)$m1
+  covmat <- survClip:::makePositiveDefinite(covmat)$m1
   cliquesIdx <- lapply(cliques, function(c) match(c, row.names(covmat)))
+  if (any(sapply(cliquesIdx, function(x) {any(is.na(x))})))
+    stop("Some genes in the cliques are not present as expression.")
   scovmat <- qpgraph::qpIPF(covmat, cliquesIdx)
   pcCov <- base::eigen(scovmat)
   eigenvector <- pcCov$vectors[, seq_len(k), drop=F]
