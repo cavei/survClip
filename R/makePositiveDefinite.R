@@ -1,4 +1,4 @@
-makePositiveDefinite<-function(m1, m2=NULL, m3=NULL, threshold=0.1){
+makePositiveDefinite <- function(m1, m2=NULL, m3=NULL, threshold=0.1){
   
   if(is.null(m2) & is.null(m3)) {
     eig<-min(round(eigen(m1)$values,2))

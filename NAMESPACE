@@ -6,5 +6,6 @@ importFrom("utils", "head")
 import(corpcor, graph, qpgraph, rrcov, survival, checkmate)
 ## exportPattern("^[[:alpha:]]+")
 export(pathwaySurvivalTest, cliqueSurvivalTest,
-       computeDays, computePCs, compPCs, topoCompPCs,
-       sparseCompPCs, getTopLoadGenes)
+       computeDays, survivalcox, pcsSurvCox, makePositiveDefinite,
+       computePCs, compPCs, topoCompPCs, sparseCompPCs,
+       getTopLoadGenes)
