@@ -3,9 +3,9 @@ importFrom("FactoMineR","estim_ncp")
 importFrom("methods", "new")
 importFrom("stats", "as.formula", "median", "na.omit", "cor", "cov", "sd")
 importFrom("utils", "head")
+importFrom("CrightArm", "computePCs")
 import(corpcor, graph, qpgraph, rrcov, survival, checkmate)
 ## exportPattern("^[[:alpha:]]+")
 export(pathwaySurvivalTest, cliqueSurvivalTest,
-       computeDays, survivalcox, pcsSurvCox, makePositiveDefinite,
-       computePCs, compPCs, topoCompPCs, sparseCompPCs,
+       computeDays, survivalcox, pcsSurvCox,
        getTopLoadGenes)

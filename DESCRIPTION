@@ -8,6 +8,6 @@ Description: SurvClip performs topological survival analysis using pathways. It 
 Encoding: UTF-8
 LazyData: true
 Depends: 
-Imports: clipper, checkmate, graph, methods, qpgraph, corpcor, survival, rrcov, FactoMineR, elasticnet
+Imports: CrightArm, clipper, checkmate, graph, methods, qpgraph, corpcor, survival, rrcov, FactoMineR, elasticnet
 Suggests: RUnit, BiocGenerics, graphite, curatedOvarianData, MASS, BiocStyle, org.Hs.eg.db, limma
 License: AGPL-3

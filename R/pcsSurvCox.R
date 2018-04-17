@@ -7,7 +7,7 @@ pcsSurvCox <- function(genes, expr, annotations, method=c("regular", "topologica
   expr <- t(expr) ## check this
 
   if (NCOL(expr)!=1) {
-    pcs <- computePCs(expr, shrink=shrink, method=method, cliques=cliques, maxPCs=maxPCs)
+    pcs <- CrightArm::computePCs(expr, shrink=shrink, method=method, cliques=cliques, maxPCs=maxPCs)
   } else {
     colnames(expr) <- "PC1"
     pcs <- list(x=expr, sdev=sd(expr), loadings=1)
