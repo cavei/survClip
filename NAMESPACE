@@ -8,4 +8,6 @@ import(corpcor, graph, qpgraph, rrcov, survival, checkmate)
 ## exportPattern("^[[:alpha:]]+")
 export(pathwaySurvivalTest, cliqueSurvivalTest,
        computeDays, survivalcox, pcsSurvCox,
-       getTopLoadGenes)
+       getTopLoadGenes, computePCs)
+
+
