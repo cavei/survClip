@@ -9,6 +9,15 @@ survivalcox <- function(coxObj, formula){
   return(list(pvalue=pvalue, zlist=zlist, coxObj=originalCoxObj))
 }
 
+#' Function to compute days
+#' 
+#' A simple function to start from an interval of dates to days
+#' 
+#' @param timeTable a table with starting date and ending date
+#' 
+#' @return the days
+#' 
+#' @export 
 computeDays <- function(timeTable) {
   if (NCOL(timeTable) != 2)
     stop("Data time table not matched.")
