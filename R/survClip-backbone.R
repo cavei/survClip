@@ -1,3 +1,21 @@
+#' Cox Model Analysis
+#' 
+#' Cox Analysis
+#' 
+#' For internal use only
+#' 
+#' @param coxObj data.frame: patients x covariates
+#' @param formula formula to use
+#' 
+#' @return A list with
+#' \item{pvalue}{pvalue of the model}
+#' \item{zlist}{pvalues of single covariates}
+#' \item{coxObj}{the original coxObj passed to the function}
+#' 
+#' @importFrom stats as.formula na.omit
+#' @importFrom survival coxph Surv
+#' 
+#' @export
 survivalcox <- function(coxObj, formula){
   originalCoxObj=coxObj
   coxObj <- na.omit(coxObj)
