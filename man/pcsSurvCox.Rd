@@ -6,7 +6,7 @@
 \usage{
 pcsSurvCox(genes, expr, annotations, method = c("regular", "topological",
   "sparse"), shrink = FALSE, cliques = NULL, maxPCs = 10,
-  survFormula = "Surv(days, status) ~")
+  survFormula = "Surv(days, status) ~", robust = FALSE)
 }
 \arguments{
 \item{genes}{vector of genes}
@@ -24,6 +24,8 @@ pcsSurvCox(genes, expr, annotations, method = c("regular", "topological",
 \item{maxPCs}{maximum number of PC to consider}
 
 \item{survFormula}{survival forumula to use}
+
+\item{robust}{should be used the robust mode for cox}
 }
 \value{
 cox model object

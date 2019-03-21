@@ -12,6 +12,7 @@
 #' @param cliques when method=topological use this cliques to define topology in IPF
 #' @param maxPCs maximum number of PC to consider
 #' @param survFormula survival forumula to use
+#' @param robust should be used the robust mode for cox
 #' 
 #' @return cox model object
 #' 
@@ -21,7 +22,10 @@
 #' 
 #' @export
 #' 
-pcsSurvCox <- function(genes, expr, annotations, method=c("regular", "topological", "sparse"), shrink=FALSE,cliques=NULL, maxPCs=10,survFormula = "Surv(days, status) ~") {
+pcsSurvCox <- function(genes, expr, annotations,
+                       method=c("regular", "topological", "sparse"),
+                       shrink=FALSE, cliques=NULL, maxPCs=10, 
+                       survFormula = "Surv(days, status) ~", robust=FALSE) {
   expr <- expr[genes,, drop=FALSE]
   
   if (NROW(expr) == 0) {
@@ -39,7 +43,11 @@ pcsSurvCox <- function(genes, expr, annotations, method=c("regular", "topologica
   comps <- paste(colnames(pcs$x), collapse ="+")
   formula = as.formula(paste(survFormula, comps, sep=" "))
   coxObj <- data.frame(pcs$x, annotations)
-  scox <- survivalcox(coxObj, formula)
+  if (robust) {
+    scox <- survivalcoxr(coxObj, formula)
+  } else {
+    scox <- survivalcox(coxObj, formula)
+  }
   scox$loadings <- pcs$loadings
   scox
 }

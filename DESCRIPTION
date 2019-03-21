@@ -1,14 +1,15 @@
 Package: survClip
 Type: Package
 Title: Survival Analysis for Pathways
-Version: 0.2.4
+Version: 0.3.0
 Author: Paolo Martini
 Maintainer: Paolo Martini <paolo.cavei@gmail.com>
 Description: SurvClip performs topological survival analysis using pathways. It combines data reduction techniques with graphical models to identify a pathway or modules of pathway that are associated to survival.
 Encoding: UTF-8
 LazyData: true
 Depends: 
-Imports: methods, houseOfClipUtility, checkmate, graph, qpgraph, corpcor, survival
+Imports: methods, houseOfClipUtility, checkmate, graph, qpgraph, corpcor, survival, coxrobust
+Remotes: github::cavei/houseOfClipUtility
 Suggests: RUnit, BiocGenerics, MASS, BiocStyle, graphite, curatedOvarianData, org.Hs.eg.db, limma
 License: AGPL-3
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

@@ -28,7 +28,7 @@
 #' @importFrom methods new
 #' 
 #' @export
-cliqueSurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~") {
+cliqueSurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regular", "sparse"), alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~", robust=FALSE) {
   if (!is.data.frame(survAnnot)){
     stop("'annotations' must be a 'data.frame' object.")
   }
@@ -50,7 +50,7 @@ cliqueSurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regul
 
   # clipper Function to import
   cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
-  results <- lapply(cliques, pcsSurvCox, expr=expr, annotations=survAnnot, method=pcsSurvCoxMethod, shrink=alwaysShrink, maxPCs=maxPCs, survFormula = survFormula)
+  results <- lapply(cliques, pcsSurvCox, expr=expr, annotations=survAnnot, method=pcsSurvCoxMethod, shrink=alwaysShrink, maxPCs=maxPCs, survFormula = survFormula, robust=robust)
   alphas  <- sapply(results, function(x) x$pvalue)
   zlist   <- lapply(results, function(x) x$zlist)
   cld     <- lapply(results, function(x) x$loadings)

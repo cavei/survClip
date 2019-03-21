@@ -11,6 +11,7 @@
 #' @param alwaysShrink if TRUE, always shrink the covariance matrix. Deafult=FALSE
 #' @param maxPCs maximum number of PCs used in the cox formula "Surv(days, status) ~ PC1.."
 #' @param survFormula the formula used in Coxph analysis. Defaut="Surv(days, status) ~". Please note that the formula end with '~' meaning that PCs will be added
+#' @param robust should be used the robust mode for cox
 #' 
 #' @return A survPath object
 #' 
@@ -35,7 +36,8 @@
 #' @export
 #' 
 pathwaySurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regular", "topological", "sparse"),
-                                alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~"){
+                                alwaysShrink=FALSE, maxPCs=10, survFormula = "Surv(days, status) ~",
+                                robust=FALSE){
   genes <- graph::nodes(graph)
   genes <- intersect(genes, rownames(expr))
   if (length(genes) <= 3){
@@ -65,7 +67,7 @@ pathwaySurvivalTest <- function(expr, survAnnot, graph, pcsSurvCoxMethod=c("regu
   
   method = pcsSurvCoxMethod[1]
   
-  res <- pcsSurvCox(genes, expr, survAnnot, method=method, shrink=alwaysShrink, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula)
+  res <- pcsSurvCox(genes, expr, survAnnot, method=method, shrink=alwaysShrink, cliques=cliques, maxPCs=maxPCs, survFormula = survFormula, robust=robust)
   new("survPath",
       pvalue = res$pvalue, zlist = res$zlist, coxObj = res$coxObj, loadings = res$loadings,
       method=method)

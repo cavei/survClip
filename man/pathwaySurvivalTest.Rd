@@ -4,9 +4,10 @@
 \alias{pathwaySurvivalTest}
 \title{Survival analysis on the whole pathway}
 \usage{
-pathwaySurvivalTest(expr, survAnnot, graph, pcsSurvCoxMethod = c("regular",
-  "topological", "sparse"), alwaysShrink = FALSE, maxPCs = 10,
-  survFormula = "Surv(days, status) ~")
+pathwaySurvivalTest(expr, survAnnot, graph,
+  pcsSurvCoxMethod = c("regular", "topological", "sparse"),
+  alwaysShrink = FALSE, maxPCs = 10,
+  survFormula = "Surv(days, status) ~", robust = FALSE)
 }
 \arguments{
 \item{expr}{expression matrix}
@@ -22,6 +23,8 @@ pathwaySurvivalTest(expr, survAnnot, graph, pcsSurvCoxMethod = c("regular",
 \item{maxPCs}{maximum number of PCs used in the cox formula "Surv(days, status) ~ PC1.."}
 
 \item{survFormula}{the formula used in Coxph analysis. Defaut="Surv(days, status) ~". Please note that the formula end with '~' meaning that PCs will be added}
+
+\item{robust}{should be used the robust mode for cox}
 }
 \value{
 A survPath object

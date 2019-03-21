@@ -15,3 +15,8 @@ test_pathwaySurvivalTest <- function(){
   checkTrue(length(test@zlist) == 2)
 }
 
+test_pathwaySurvivalTestRobust <- function(){
+  set.seed(1234)
+  test <- pathwaySurvivalTest(expr, survAnnot, graph, maxPCs=2, robust=TRUE)
+  checkTrue(length(test@zlist) == 2)
+}
